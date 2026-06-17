@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16204A">
+<title>Dova Probiotics Oral Spray — Never Wonder About Your Breath Again</title>
+<meta name="description" content="Bad breath always comes back because mints only mask the sulfur gas behind it. Dova's probiotics target it at the source — so fresh holds. 4.8/5 from 10,000+ verified customers. 180-day money-back guarantee.">
+
+<!-- Preconnect for fast font load on mobile paid traffic -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#FBF6EC;
+    --paper-2:#F4ECDC;
+    --ink:#1C1A17;
+    --ink-soft:#4A453D;
+    --mint:#16C0A0;
+    --mint-deep:#0E7E6A;
+    --mint-tint:#DFF4EE;
+    --coral:#FF5A47;
+    --coral-deep:#D43A28;
+    --gold:#E7B24B;
+    --line:rgba(28,26,23,.14);
+    --shadow:0 18px 50px -22px rgba(28,26,23,.45);
+    --maxw:560px;
+    --r:18px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hanken Grotesk",-apple-system,sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* paper grain texture */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  }
+
+  h1,h2,h3,.serif{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.08;letter-spacing:-.01em}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;position:relative;z-index:1}
+  section{position:relative;z-index:1}
+
+  /* ============ ANNOUNCEMENT TICKER ============ */
+  .ticker{background:var(--ink);color:var(--paper);overflow:hidden;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .ticker-track{display:flex;gap:42px;white-space:nowrap;padding:10px 0;width:max-content;animation:scroll 26s linear infinite}
+  .ticker-track span{display:inline-flex;align-items:center;gap:9px}
+  .ticker-track .dot{color:var(--mint)}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* ============ NAV ============ */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;background:rgba(251,246,236,.86);backdrop-filter:blur(10px)}
+  .brand{font-family:"Fraunces";font-weight:800;font-size:25px;letter-spacing:-.02em}
+  .brand b{color:var(--mint-deep)}
+  .nav-cta{font-size:13px;font-weight:700;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:100px;text-decoration:none;letter-spacing:.01em}
+
+  /* ============ ANIMATIONS ============ */
+  .rise{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .rise.in{opacity:1;transform:none}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .hero-stagger>*{opacity:0;animation:fadeUp .8s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero-stagger>*:nth-child(1){animation-delay:.05s}
+  .hero-stagger>*:nth-child(2){animation-delay:.16s}
+  .hero-stagger>*:nth-child(3){animation-delay:.28s}
+  .hero-stagger>*:nth-child(4){animation-delay:.4s}
+  .hero-stagger>*:nth-child(5){animation-delay:.52s}
+  .hero-stagger>*:nth-child(6){animation-delay:.64s}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rise{opacity:1;transform:none}}
+
+  /* ============ HERO ============ */
+  .hero{padding:30px 0 38px;text-align:center;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:520px;height:420px;
+    background:radial-gradient(closed,ellipse);background:radial-gradient(ellipse at center,rgba(22,192,160,.22),transparent 62%);z-index:-1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--coral-deep);background:rgba(255,90,71,.1);padding:7px 14px;border-radius:100px;margin-bottom:20px}
+  .hero h1{font-size:clamp(36px,10vw,48px);font-weight:600}
+  .hero h1 em{font-style:italic;color:var(--mint-deep)}
+  .hero .sub{font-size:18px;color:var(--ink-soft);margin:18px auto 0;max-width:430px}
+  .stars{color:var(--gold);letter-spacing:2px;font-size:17px}
+  .rating-row{display:inline-flex;align-items:center;gap:10px;margin-top:22px;font-size:14px;font-weight:600;color:var(--ink-soft)}
+
+  .hero-card{margin:28px auto 0;background:linear-gradient(170deg,#16204A,#0c1330);border-radius:26px;padding:30px 24px;color:var(--paper);box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero-card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 0%,rgba(22,192,160,.35),transparent 55%);pointer-events:none}
+  .hero-bottle{font-size:78px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 10px 22px rgba(0,0,0,.4))}
+  .hero-card .label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--mint);font-weight:700}
+  .hero-card h3{font-size:23px;margin:6px 0 2px;color:#fff}
+
+  .benefits{list-style:none;text-align:left;margin:26px auto 0;max-width:420px;display:grid;gap:13px}
+  .benefits li{display:flex;gap:13px;align-items:flex-start;font-weight:500;font-size:16px}
+  .benefits .ck{flex:none;width:25px;height:25px;border-radius:50%;background:var(--mint);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:800;margin-top:1px}
+
+  .btn{display:block;width:100%;text-align:center;background:var(--coral);color:#fff;font-family:"Hanken Grotesk";font-weight:800;font-size:18px;letter-spacing:.01em;padding:18px 22px;border-radius:100px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 14px 30px -10px rgba(255,90,71,.6);transition:transform .15s ease,box-shadow .15s ease;position:relative}
+  .btn:active{transform:scale(.98)}
+  .btn.mint{background:var(--mint-deep);box-shadow:0 14px 30px -10px rgba(14,126,106,.55)}
+  .btn.ink{background:var(--ink);box-shadow:none}
+  .btn-sub{font-size:13px;color:var(--ink-soft);text-align:center;margin-top:11px;font-weight:500}
+  .btn-wrap{margin-top:26px}
+  @keyframes pulse{0%,100%{box-shadow:0 14px 30px -10px rgba(255,90,71,.6)}50%{box-shadow:0 14px 30px -4px rgba(255,90,71,.85)}}
+  .btn.pulse{animation:pulse 2.4s ease-in-out infinite}
+
+  /* ============ PRESS / MARQUEE ============ */
+  .press{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;background:var(--paper-2);overflow:hidden}
+  .press p{text-align:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:12px}
+  .press-track{display:flex;gap:40px;white-space:nowrap;width:max-content;animation:scroll 22s linear infinite;align-items:center}
+  .press-track span{font-family:"Fraunces";font-weight:700;font-size:19px;opacity:.55;font-style:italic}
+
+  /* ============ SECTION HELPERS ============ */
+  .sec{padding:52px 0}
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mint-deep);margin-bottom:14px}
+  .tag.coral{color:var(--coral-deep)}
+  h2{font-size:clamp(28px,8vw,36px)}
+  .lead{font-size:18px;color:var(--ink-soft);margin-top:16px}
+  p+p{margin-top:15px}
+
+  /* ============ STORY / HOOK ============ */
+  .story p{font-size:18.5px;line-height:1.62}
+  .story .big{font-family:"Fraunces";font-size:25px;font-style:italic;color:var(--ink);line-height:1.3;margin:22px 0;font-weight:500}
+  .pullquote{border-left:4px solid var(--coral);padding:6px 0 6px 20px;margin:26px 0;font-family:"Fraunces";font-size:22px;font-style:italic;line-height:1.35}
+
+  /* ============ VILLAIN ============ */
+  .villain{background:var(--ink);color:var(--paper);padding:56px 0}
+  .villain h2{color:#fff}
+  .villain h2 em{font-style:italic;color:var(--coral)}
+  .villain .lead{color:rgba(251,246,236,.7)}
+  .myth{display:grid;gap:12px;margin-top:30px}
+  .myth-row{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:15px 18px;border-radius:14px}
+  .myth-row .x{flex:none;width:28px;height:28px;border-radius:50%;background:rgba(255,90,71,.18);color:var(--coral);display:grid;place-items:center;font-weight:800}
+  .myth-row b{display:block;font-size:16px}
+  .myth-row small{color:rgba(251,246,236,.6);font-size:13.5px}
+  .culprit{margin-top:30px;background:linear-gradient(160deg,rgba(255,90,71,.16),rgba(255,90,71,.04));border:1px solid rgba(255,90,71,.3);border-radius:18px;padding:26px 22px}
+  .culprit .label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);font-weight:800}
+  .culprit h3{font-family:"Fraunces";color:#fff;font-size:23px;margin:8px 0 10px}
+  .culprit p{color:rgba(251,246,236,.78);font-size:16px}
+
+  /* ============ MECHANISM / WHY DOVA ============ */
+  .mech-hero{text-align:center}
+  .mech-hero h2 em{font-style:italic;color:var(--mint-deep)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
+  .compare .col{border-radius:16px;padding:22px 16px;border:1px solid var(--line)}
+  .compare .col.old{background:var(--paper-2)}
+  .compare .col.new{background:var(--mint-tint);border-color:rgba(22,192,160,.4)}
+  .compare h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;font-family:"Hanken Grotesk";font-weight:800}
+  .compare .col.old h4{color:var(--ink-soft)}
+  .compare .col.new h4{color:var(--mint-deep)}
+  .compare ul{list-style:none;display:grid;gap:11px}
+  .compare li{font-size:14.5px;display:flex;gap:9px;align-items:flex-start;line-height:1.35}
+  .compare .ic{flex:none;font-weight:800}
+  .compare .old .ic{color:var(--coral)}
+  .compare .new .ic{color:var(--mint-deep)}
+
+  .steps{margin-top:36px;display:grid;gap:0}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:18px;padding-bottom:26px;position:relative}
+  .step:not(:last-child)::before{content:"";position:absolute;left:18px;top:40px;bottom:0;width:2px;background:repeating-linear-gradient(var(--mint) 0 6px,transparent 6px 12px)}
+  .step .num{flex:none;width:38px;height:38px;border-radius:50%;background:var(--mint);color:#fff;display:grid;place-items:center;font-family:"Fraunces";font-weight:700;font-size:18px;z-index:1}
+  .step h4{font-family:"Fraunces";font-size:20px;margin-bottom:4px}
+  .step p{font-size:15.5px;color:var(--ink-soft)}
+
+  .disclaimer{font-size:12.5px;color:var(--ink-soft);opacity:.8;margin-top:26px;line-height:1.5;font-style:italic}
+
+  /* ============ FLAVOURS ============ */
+  .flavours{background:var(--paper-2);}
+  .flav-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
+  .flav{border-radius:16px;padding:22px 16px;color:#fff;position:relative;overflow:hidden;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end}
+  .flav span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:700}
+  .flav b{font-family:"Fraunces";font-size:21px;font-weight:600}
+  .f1{background:linear-gradient(150deg,#1aa3c4,#0d5e8a)}
+  .f2{background:linear-gradient(150deg,#19b98f,#0c6e57)}
+  .f3{background:linear-gradient(150deg,#ff8a5b,#e0552f)}
+  .f4{background:linear-gradient(150deg,#7a5bd6,#3b2580)}
+  .flav .emoji{position:absolute;top:14px;right:14px;font-size:30px;opacity:.9}
+
+  /* ============ SOCIAL PROOF ============ */
+  .proof-head{text-align:center}
+  .bigstat{display:flex;justify-content:center;gap:28px;margin:30px 0 8px;flex-wrap:wrap}
+  .bigstat .item{text-align:center}
+  .bigstat .n{font-family:"Fraunces";font-size:42px;font-weight:700;color:var(--mint-deep);line-height:1}
+  .bigstat .l{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:700;margin-top:6px}
+
+  .reviews{display:grid;gap:14px;margin-top:30px}
+  .review{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 24px -18px rgba(28,26,23,.5)}
+  .review .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .review .who{display:flex;align-items:center;gap:11px}
+  .review .av{width:38px;height:38px;border-radius:50%;background:var(--mint-tint);color:var(--mint-deep);display:grid;place-items:center;font-weight:800;font-family:"Fraunces"}
+  .review .who b{font-size:15px}
+  .review .verified{font-size:11px;color:var(--mint-deep);font-weight:700;display:flex;align-items:center;gap:4px}
+  .review .stars{font-size:14px}
+  .review p{font-size:15.5px;line-height:1.5}
+  .review .ph{color:var(--ink-soft);font-style:italic;opacity:.55}
+  .editor-note{font-size:12px;background:var(--mint-tint);border:1px dashed var(--mint-deep);color:var(--mint-deep);padding:12px 14px;border-radius:12px;margin-top:18px;line-height:1.45;font-weight:600}
+
+  /* ============ OFFER ============ */
+  .offer{background:linear-gradient(180deg,var(--paper),var(--mint-tint))}
+  .offer-card{background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;margin-top:28px}
+  .offer-card .head{background:var(--ink);color:#fff;text-align:center;padding:16px;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+  .offer-card .head .pill{background:var(--coral);padding:3px 10px;border-radius:100px;font-size:12px;margin-left:6px}
+  .offer-body{padding:26px 22px}
+  .bundles{display:grid;gap:12px}
+  .bundle{border:2px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;background:#fff}
+  .bundle.best{border-color:var(--mint-deep);background:var(--mint-tint)}
+  .bundle .radio{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center}
+  .bundle.best .radio{border-color:var(--mint-deep)}
+  .bundle.best .radio::after{content:"";width:11px;height:11px;border-radius:50%;background:var(--mint-deep)}
+  .bundle .info{flex:1}
+  .bundle .info b{font-size:16px}
+  .bundle .info small{display:block;color:var(--ink-soft);font-size:13px}
+  .bundle .price{text-align:right}
+  .bundle .price b{font-size:18px;font-family:"Fraunces"}
+  .bundle .price s{display:block;font-size:13px;color:var(--ink-soft)}
+  .bundle .flag{position:absolute;top:-11px;right:14px;background:var(--mint-deep);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:100px}
+  .pay{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px;font-size:11px;color:var(--ink-soft);font-weight:600;letter-spacing:.04em}
+  .pay span{border:1px solid var(--line);border-radius:6px;padding:4px 9px;background:var(--paper);font-weight:700}
+
+  /* ============ GUARANTEE ============ */
+  .guarantee{text-align:center}
+  .seal{width:128px;height:128px;margin:0 auto 22px;border-radius:50%;background:radial-gradient(circle at 50% 35%,var(--mint),var(--mint-deep));color:#fff;display:grid;place-items:center;box-shadow:0 18px 40px -14px rgba(14,126,106,.6);position:relative}
+  .seal::before{content:"";position:absolute;inset:8px;border:2px dashed rgba(255,255,255,.55);border-radius:50%}
+  .seal .d{font-family:"Fraunces";font-size:40px;font-weight:800;line-height:.9}
+  .seal .day{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+  .guarantee p{max-width:440px;margin-left:auto;margin-right:auto}
+
+  /* ============ FAQ ============ */
+  .faq{margin-top:26px;display:grid;gap:10px}
+  details{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  details[open]{border-color:var(--mint-deep)}
+  summary{padding:18px 20px;font-weight:700;font-size:16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px}
+  summary::-webkit-details-marker{display:none}
+  summary .pm{flex:none;width:24px;height:24px;border-radius:50%;background:var(--mint-tint);color:var(--mint-deep);display:grid;place-items:center;font-weight:800;transition:transform .25s}
+  details[open] summary .pm{transform:rotate(45deg)}
+  details .a{padding:0 20px 20px;color:var(--ink-soft);font-size:15.5px;line-height:1.55}
+
+  /* ============ FINAL CTA ============ */
+  .final{background:linear-gradient(170deg,#16204A,#0a1026);color:var(--paper);text-align:center;padding:60px 0}
+  .final h2{color:#fff;font-size:clamp(30px,9vw,40px)}
+  .final h2 em{font-style:italic;color:var(--mint)}
+  .final .sub{color:rgba(251,246,236,.72);margin:16px auto 0;max-width:420px}
+  .final .stars{margin-top:22px;display:block}
+
+  /* ============ FOOTER ============ */
+  footer{background:var(--ink);color:rgba(251,246,236,.6);padding:36px 0 44px;font-size:13px}
+  footer .brand{color:#fff;margin-bottom:12px;font-size:22px}
+  footer a{color:var(--mint);text-decoration:none}
+  footer .links{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 20px}
+  footer .fine{font-size:11.5px;line-height:1.55;opacity:.7;border-top:1px solid rgba(255,255,255,.12);padding-top:18px;margin-top:8px}
+
+  /* ============ STICKY MOBILE CTA ============ */
+  .sticky{position:fixed;left:0;right:0;bottom:0;z-index:90;padding:11px 16px calc(11px + env(safe-area-inset-bottom));background:rgba(251,246,236,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);transform:translateY(120%);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .sticky.show{transform:none}
+  .sticky-inner{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:13px}
+  .sticky .meta{flex:1;min-width:0}
+  .sticky .meta b{font-size:15px;display:block;line-height:1.15}
+  .sticky .meta small{font-size:12px;color:var(--ink-soft)}
+  .sticky .meta s{color:var(--ink-soft);opacity:.7}
+  .sticky a{flex:none;background:var(--coral);color:#fff;font-weight:800;padding:14px 22px;border-radius:100px;text-decoration:none;font-size:15px;box-shadow:0 10px 24px -10px rgba(255,90,71,.7)}
+
+  @media(min-width:600px){
+    .hero h1{font-size:54px}
+    body{font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ANNOUNCEMENT TICKER ============ -->
+<div class="ticker" aria-label="Announcements">
+  <div class="ticker-track">
+    <span><b class="dot">●</b> 180-Day Money-Back Guarantee</span>
+    <span><b class="dot">●</b> 10,000+ Verified Customers</span>
+    <span><b class="dot">●</b> Rated 4.8 / 5</span>
+    <span><b class="dot">●</b> Alcohol-Free Formula</span>
+    <span><b class="dot">●</b> Free Tracked Shipping</span>
+    <!-- duplicate for seamless loop -->
+    <span><b class="dot">●</b> 180-Day Money-Back Guarantee</span>
+    <span><b class="dot">●</b> 10,000+ Verified Customers</span>
+    <span><b class="dot">●</b> Rated 4.8 / 5</span>
+    <span><b class="dot">●</b> Alcohol-Free Formula</span>
+    <span><b class="dot">●</b> Free Tracked Shipping</span>
+  </div>
+</div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="brand">Dova<b>.</b></div>
+  <a class="nav-cta" href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Shop Now</a>
+</nav>
+
+<!-- ============ HERO (LOSS-FRAMED HOOK) ============ -->
+<section class="hero">
+  <div class="wrap hero-stagger">
+    <div><span class="eyebrow">⚠ The moment you can't take back</span></div>
+    <h1>You can't smell<br>your own breath.<br><em>They can.</em></h1>
+    <p class="sub">The scariest part of leaning in for a kiss isn't the nerves — it's not knowing. Dova is the 2-second insurance that takes the wondering off the table.</p>
+    <div class="rating-row"><span class="stars">★★★★★</span> 4.8/5 from 10,000+ verified customers</div>
+
+    <div class="hero-card">
+      <div class="hero-bottle">🧴</div>
+      <div class="label">Probiotic Oral Spray</div>
+      <h3>Dova — Never wonder again.</h3>
+      <div style="font-size:14px;opacity:.8;margin-top:4px">Alcohol-free · 4 flavours · Pocket-sized</div>
+    </div>
+
+    <ul class="benefits">
+      <li><span class="ck">✓</span> <span><b>Kills the wondering, not just the smell</b> — works at the source where mints can't reach.</span></li>
+      <li><span class="ck">✓</span> <span><b>One 2-second spray</b> before you get close. That's the whole routine.</span></li>
+      <li><span class="ck">✓</span> <span><b>Alcohol-free &amp; non-drying</b> — no burn, no chalky mouth.</span></li>
+      <li><span class="ck">✓</span> <span><b>Backed by a 180-day guarantee</b> — or your money back, no awkward questions.</span></li>
+    </ul>
+
+    <div class="btn-wrap">
+      <a class="btn pulse" href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Get Dova — Never Wonder Again →</a>
+      <p class="btn-sub">From £29.95 · 180-day money-back guarantee</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRESS / TRUST MARQUEE ============ -->
+<div class="press">
+  <p>What people keep saying about Dova</p>
+  <div class="press-track">
+    <span>"finally something that lasts"</span>
+    <span>★ 4.8/5</span>
+    <span>"I stopped doing the hand-cup test"</span>
+    <span>10,000+ customers</span>
+    <span>"goes everywhere I go"</span>
+    <span>"finally something that lasts"</span>
+    <span>★ 4.8/5</span>
+    <span>"I stopped doing the hand-cup test"</span>
+    <span>10,000+ customers</span>
+    <span>"goes everywhere I go"</span>
+  </div>
+</div>
+
+<!-- ============ STORY / HOOK DEEPENS ============ -->
+<section class="sec story">
+  <div class="wrap">
+    <span class="tag coral rise">Let's be honest</span>
+    <h2 class="rise">The hand-over-the-mouth test doesn't actually work.</h2>
+    <p class="lead rise">You breathe into your palm. You sniff. It seems fine. So you lean in anyway — and spend the whole time half-distracted, hoping you got away with it.</p>
+    <p class="big rise">Here's the uncomfortable truth: your nose literally tunes out your own breath. The one person who can't check is you.</p>
+    <p class="rise">So you stock up. Mints in one pocket, gum in the other, a bottle of mouthwash by the sink. And for about twenty minutes, you feel safe. Then it creeps back — usually at the worst possible moment.</p>
+    <div class="pullquote rise">"Why does it always come back, no matter how much I brush, rinse, and chew?"</div>
+    <p class="rise">If you've ever asked that, you're not doing anything wrong. You've just been fighting the wrong thing.</p>
+  </div>
+</section>
+
+<!-- ============ THE VILLAIN (UMP — sulfur gas) ============ -->
+<section class="villain">
+  <div class="wrap">
+    <span class="tag coral rise" style="color:var(--coral)">The real culprit</span>
+    <h2 class="rise">It was never about how <em>clean</em> your mouth felt.</h2>
+    <p class="lead rise">Most bad breath isn't food and it isn't poor hygiene. It's a gas. Specific bacteria — living in the spots a toothbrush can't reach — feed and release Volatile Sulfur Compounds (VSCs). That sulfur smell is what people actually notice.</p>
+
+    <div class="myth rise">
+      <div class="myth-row"><span class="x">✕</span><div><b>Mints &amp; gum</b><small>Add a stronger smell on top. The sulfur is still being made underneath.</small></div></div>
+      <div class="myth-row"><span class="x">✕</span><div><b>Most mouthwashes</b><small>Blast everything for a few minutes — then the bacteria repopulate and the gas returns.</small></div></div>
+      <div class="myth-row"><span class="x">✕</span><div><b>Brushing harder</b><small>Can't reach the back-of-tongue and gum-line pockets where most VSCs come from.</small></div></div>
+    </div>
+
+    <div class="culprit rise">
+      <div class="label">⚠ Why it always came back</div>
+      <h3>You were masking the smell. Nothing was touching the source.</h3>
+      <p>Cover up a sulfur factory with peppermint and you buy yourself minutes. Leave the factory running and the smell always — always — comes back. That's not bad luck. That's biology.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THAT'S WHY DOVA LASTS (UMS) ============ -->
+<section class="sec mech-hero">
+  <div class="wrap">
+    <span class="tag rise">The shift</span>
+    <h2 class="rise">That's exactly why <em>Dova</em> is different.</h2>
+    <p class="lead rise">Instead of piling another smell on top, Dova goes after the bacteria making the sulfur in the first place. Its probiotic strains are designed to crowd out the odour-causing bacteria and support a healthier oral balance — so freshness has a reason to hold, not just hide.</p>
+
+    <div class="compare rise">
+      <div class="col old">
+        <h4>Mints &amp; mouthwash</h4>
+        <ul>
+          <li><span class="ic">✕</span> Mask the smell on top</li>
+          <li><span class="ic">✕</span> Wears off in minutes</li>
+          <li><span class="ic">✕</span> Leaves the source untouched</li>
+          <li><span class="ic">✕</span> Often alcohol &amp; drying</li>
+        </ul>
+      </div>
+      <div class="col new">
+        <h4>Dova probiotics</h4>
+        <ul>
+          <li><span class="ic">✓</span> Targets the bacteria at the source</li>
+          <li><span class="ic">✓</span> Built to hold, not just hide</li>
+          <li><span class="ic">✓</span> Supports oral balance over time</li>
+          <li><span class="ic">✓</span> Alcohol-free &amp; non-drying</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="steps rise">
+      <div class="step"><span class="num">1</span><div><h4>Spray</h4><p>Two seconds, anywhere — pocket, bag, car, bathroom mirror. No water, no rinsing.</p></div></div>
+      <div class="step"><span class="num">2</span><div><h4>Settle</h4><p>The probiotic formula goes to work where the smell actually starts, not just on your tongue's surface.</p></div></div>
+      <div class="step"><span class="num">3</span><div><h4>Stop wondering</h4><p>Lean in without the mental checklist. Use it daily and you're supporting the balance that keeps it that way.</p></div></div>
+    </div>
+
+    <p class="disclaimer rise">Dova is a cosmetic oral care spray intended to freshen breath and support a balanced oral environment. It is not a medicine and is not intended to diagnose, treat, cure, or prevent any disease. Persistent bad breath can have underlying causes — if it continues, please speak to your dentist or GP.</p>
+  </div>
+</section>
+
+<!-- ============ FLAVOURS ============ -->
+<section class="sec flavours">
+  <div class="wrap">
+    <span class="tag rise">Pick your flavour</span>
+    <h2 class="rise">Four ways to never wonder.</h2>
+    <p class="lead rise">Same source-level formula. Your call on the finish.</p>
+    <div class="flav-grid rise">
+      <div class="flav f1"><span class="emoji">❄️</span><span>Cool &amp; crisp</span><b>Arctic Mint</b></div>
+      <div class="flav f2"><span class="emoji">🌿</span><span>Clean &amp; green</span><b>Fresh Oasis</b></div>
+      <div class="flav f3"><span class="emoji">🍑</span><span>Soft &amp; sweet</span><b>Sunset Peach</b></div>
+      <div class="flav f4"><span class="emoji">🍇</span><span>Bold &amp; deep</span><b>Midnight Grape</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOCIAL PROOF ============ -->
+<section class="sec">
+  <div class="wrap proof-head">
+    <span class="tag rise">The receipts</span>
+    <h2 class="rise">10,000+ people stopped wondering.</h2>
+    <div class="bigstat rise">
+      <div class="item"><div class="n">4.8★</div><div class="l">Average rating</div></div>
+      <div class="item"><div class="n">10k+</div><div class="l">Verified customers</div></div>
+      <div class="item"><div class="n">180</div><div class="l">Day guarantee</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="reviews">
+      <!-- ════════════════════════════════════════════════════════════════
+           REVIEW SLOTS — paste your REAL verified customer reviews here.
+           Do not invent reviews. Replace the placeholder text and the
+           initial/name with genuine ones exported from your store.
+           ════════════════════════════════════════════════════════════════ -->
+      <div class="review rise">
+        <div class="top">
+          <div class="who"><div class="av">★</div><div><b>Verified review</b><div class="verified">✓ Verified Customer</div></div></div>
+          <div class="stars">★★★★★</div>
+        </div>
+        <p class="ph">[Paste a real 5-star verified review here — keep the customer's own words. Do not fabricate.]</p>
+      </div>
+      <div class="review rise">
+        <div class="top">
+          <div class="who"><div class="av">★</div><div><b>Verified review</b><div class="verified">✓ Verified Customer</div></div></div>
+          <div class="stars">★★★★★</div>
+        </div>
+        <p class="ph">[Paste a real verified review here.]</p>
+      </div>
+      <div class="review rise">
+        <div class="top">
+          <div class="who"><div class="av">★</div><div><b>Verified review</b><div class="verified">✓ Verified Customer</div></div></div>
+          <div class="stars">★★★★★</div>
+        </div>
+        <p class="ph">[Paste a real verified review here.]</p>
+      </div>
+    </div>
+    <div class="editor-note rise">⚑ Note for the store owner: these review cards are placeholders. Drop in genuine reviews (and real first names/initials) from your verified customer base. The 4.8★ / 10,000+ figures and 180-day guarantee shown elsewhere are stated as fact — keep them accurate.</div>
+  </div>
+</section>
+
+<!-- ============ OFFER + PRICE/BUNDLE ============ -->
+<section class="sec offer">
+  <div class="wrap">
+    <span class="tag rise">Your insurance, in your pocket</span>
+    <h2 class="rise">Get Dova today.</h2>
+    <p class="lead rise">Most people don't buy one. The wondering shows up everywhere, so they keep one in every bag — and the bundle is where the price drops.</p>
+
+    <div class="offer-card rise">
+      <div class="head">Limited launch pricing <span class="pill">Save up to 40%</span></div>
+      <div class="offer-body">
+        <div class="bundles">
+          <a class="bundle" href="https://dovaonline.store/products/dovas-probiotics-oral-spray" style="text-decoration:none">
+            <span class="radio"></span>
+            <div class="info"><b>1 Bottle</b><small>Try it out</small></div>
+            <div class="price"><b>£29.95</b></div>
+          </a>
+          <a class="bundle best" href="https://dovaonline.store/products/dovas-probiotics-oral-spray" style="text-decoration:none">
+            <span class="flag">Most popular</span>
+            <span class="radio"></span>
+            <div class="info"><b>3 Bottles</b><small>Home · bag · car — never caught out</small></div>
+            <div class="price"><b>£59.95</b><s>£89.85</s></div>
+          </a>
+          <a class="bundle" href="https://dovaonline.store/products/dovas-probiotics-oral-spray" style="text-decoration:none">
+            <span class="radio"></span>
+            <div class="info"><b>5 Bottles</b><small>Best value · stock up &amp; share</small></div>
+            <div class="price"><b>£89.95</b><s>£149.75</s></div>
+          </a>
+        </div>
+
+        <div class="btn-wrap">
+          <a class="btn pulse" href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Add To Cart →</a>
+          <p class="btn-sub">🔒 Secure checkout · 180-day money-back guarantee</p>
+        </div>
+
+        <div class="pay">
+          Safe &amp; secure checkout
+          <span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>PayPal</span><span>Apple&nbsp;Pay</span><span>G&nbsp;Pay</span>
+        </div>
+      </div>
+    </div>
+    <p class="btn-sub rise" style="margin-top:18px">Pricing shown for illustration — confirm live prices on the product page.</p>
+  </div>
+</section>
+
+<!-- ============ GUARANTEE / RISK REVERSAL ============ -->
+<section class="sec guarantee">
+  <div class="wrap">
+    <div class="seal rise"><div><div class="d">180</div><div class="day">Day Promise</div></div></div>
+    <span class="tag rise">Zero risk</span>
+    <h2 class="rise">Try it for a full 6 months. On us.</h2>
+    <p class="lead rise">Use Dova. If it doesn't take the wondering off the table, email us within 180 days and we'll refund you — every penny. You don't even have to send the bottle back.</p>
+    <p class="rise">That's how confident we are that once you stop masking and start at the source, you won't want to go back.</p>
+    <div class="btn-wrap"><a class="btn mint" href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Try Dova Risk-Free →</a></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec">
+  <div class="wrap">
+    <span class="tag rise">Before you ask</span>
+    <h2 class="rise">Questions, answered.</h2>
+    <div class="faq">
+      <details class="rise"><summary>How is this different from mouthwash or mints?<span class="pm">+</span></summary><div class="a">Mints and most mouthwashes work on top — they add a smell or blast everything briefly, then wear off. Dova's probiotic approach targets the odour-causing bacteria that produce sulfur gas in the first place, and supports a healthier oral balance so freshness has a reason to hold rather than just hide.</div></details>
+      <details class="rise"><summary>How do I use it?<span class="pm">+</span></summary><div class="a">One 2-second spray, directly into the mouth. No water, no rinsing, nothing to spit out. Use it before you get close, and daily to support ongoing balance.</div></details>
+      <details class="rise"><summary>Does it contain alcohol?<span class="pm">+</span></summary><div class="a">No. Dova is alcohol-free and non-drying, so there's no burn and no chalky after-feel.</div></details>
+      <details class="rise"><summary>Which flavour should I pick?<span class="pm">+</span></summary><div class="a">All four use the same formula — it's purely about finish. Arctic Mint is the crisp classic, Fresh Oasis is clean and green, Sunset Peach is soft and sweet, and Midnight Grape is bold and deep.</div></details>
+      <details class="rise"><summary>What if it doesn't work for me?<span class="pm">+</span></summary><div class="a">You're covered by our 180-day money-back guarantee. If you're not happy, email us within 180 days for a full refund — no need to return the bottle.</div></details>
+      <details class="rise"><summary>How fast does it ship?<span class="pm">+</span></summary><div class="a">Orders are dispatched with free tracked shipping and you'll get a tracking link by email. Delivery timings are shown at checkout.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="final">
+  <div class="wrap">
+    <span class="stars" style="color:var(--gold);font-size:18px">★★★★★</span>
+    <h2>Stop wondering.<br><em>Start leaning in.</em></h2>
+    <p class="sub">The next time you get close, the only thing on your mind should be the moment — not your breath. Dova handles the rest.</p>
+    <div class="btn-wrap"><a class="btn pulse" href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Get Dova — Never Wonder Again →</a></div>
+    <p class="btn-sub" style="color:rgba(251,246,236,.6)">From £29.95 · 180-day money-back guarantee · 4.8/5 from 10,000+ customers</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="brand serif">Dova<b style="color:var(--mint)">.</b></div>
+    <p>Never wonder about your breath again.</p>
+    <div class="links">
+      <a href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Shop</a>
+      <a href="#">Contact</a>
+      <a href="#">Shipping</a>
+      <a href="#">Refund Policy</a>
+      <a href="#">Privacy</a>
+    </div>
+    <p class="fine">© 2026 Dova. All rights reserved. Dova is a cosmetic oral-care product intended to freshen breath and support a balanced oral environment. It is not a medicine and is not intended to diagnose, treat, cure, or prevent any disease. Results and experiences vary from person to person. Statements regarding the product have not been evaluated by a medical regulator. If you have persistent bad breath or any oral health concern, please consult your dentist or doctor.</p>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE CTA ============ -->
+<div class="sticky" id="sticky">
+  <div class="sticky-inner">
+    <div class="meta"><b>Dova Oral Spray</b><small>£29.95 · 180-day guarantee</small></div>
+    <a href="https://dovaonline.store/products/dovas-probiotics-oral-spray">Get Yours →</a>
+  </div>
+</div>
+
+<script>
+  // Scroll reveal — lightweight IntersectionObserver
+  (function(){
+    var els=document.querySelectorAll('.rise');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}
+      });
+    },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){io.observe(e);});
+  })();
+
+  // Sticky CTA appears after hero scrolls away, hides near final CTA/footer
+  (function(){
+    var sticky=document.getElementById('sticky');
+    var hero=document.querySelector('.hero');
+    var final=document.querySelector('.final');
+    function update(){
+      var past=window.scrollY>(hero.offsetHeight+120);
+      var atEnd=final.getBoundingClientRect().top<window.innerHeight;
+      if(past&&!atEnd){sticky.classList.add('show');}else{sticky.classList.remove('show');}
+    }
+    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);update();
+  })();
+
+  // Bundle selection visual toggle (purchase still happens on product page)
+  (function(){
+    var bundles=document.querySelectorAll('.bundle');
+    bundles.forEach(function(b){
+      b.addEventListener('click',function(e){
+        // allow navigation; just update visual state on touch before unload
+        bundles.forEach(function(x){x.classList.remove('best')});
+        b.classList.add('best');
+      });
+    });
+  })();
+</script>
+</body>
+</html>
