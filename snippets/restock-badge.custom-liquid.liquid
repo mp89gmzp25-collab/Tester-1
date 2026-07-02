@@ -6,12 +6,18 @@
 
   HOW TO USE
   Theme editor → Product template → Add block → "Custom Liquid" → paste
-  this whole file into the code box → Save. Replaces the old single-line
-  "Note: Sold out & restocked 3x". Centered, borderless.
+  this whole file into the code box → Save. Left-aligned, borderless.
+
+  LAYOUT
+  Row 1:  [✓ Restocked]  Sold out 3x — restocked by popular demand.
+  Row 2:                 Selling fast — most grab the 3-pack.
+  The pill sits inline to the LEFT of the headline; the subtext lines up
+  under the headline text (not the pill). Headline stays flush-left if it
+  wraps on narrow screens.
 
   TO EDIT COPY / NUMBER / COLORS
   Everything lives in the EDIT HERE block just below — change the values
-  between the quotes. Token {count} → sellout_count in the bold line.
+  between the quotes. Token {count} → sellout_count in the headline.
   Set any text line to '' (empty) to hide it. Icon: 'check' or 'box'.
   ============================================================================
 {%- endcomment -%}
@@ -23,7 +29,7 @@
 
   assign sellout_count = 3
   assign heading       = 'Sold out {count}x — restocked by popular demand.'
-  assign subtext       = 'Selling fast? Most grab the 3-pack.'
+  assign subtext       = 'Selling fast — most grab the 3-pack.'
 
   assign pill_bg       = '#3FA34D'
   assign pill_text     = '#FFFFFF'
@@ -38,16 +44,19 @@
 
 <style>
   .rb-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    column-gap: 8px;
+    row-gap: 2px;
     background: transparent;
     font-family: inherit;
+    text-align: left;
     margin: {{ margin_top }}px 0 {{ margin_bottom }}px;
   }
   .rb-badge__pill {
+    grid-column: 1;
+    grid-row: 1;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -63,6 +72,9 @@
   }
   .rb-badge__pill svg { width: 14px; height: 14px; display: block; flex: 0 0 auto; }
   .rb-badge__heading {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
     color: {{ heading_color }};
     font-size: 15px;
     font-weight: 700;
@@ -70,6 +82,8 @@
     margin: 0;
   }
   .rb-badge__sub {
+    grid-column: 2;
+    grid-row: 2;
     color: {{ subtext_color }};
     font-size: 13px;
     font-weight: 400;
