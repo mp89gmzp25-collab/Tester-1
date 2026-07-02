@@ -6,17 +6,12 @@
 
   HOW TO USE
   Theme editor → Product template → Add block → "Custom Liquid" → paste
-  this whole file into the code box → Save. Place it directly UNDER the
-  emoji-benefit bullets and ABOVE the "Unlock Bigger Savings" header.
-  Safe to paste a second copy elsewhere (styles are class-scoped).
+  this whole file into the code box → Save. Replaces the old single-line
+  "Note: Sold out & restocked 3x". Centered, borderless.
 
-  TO EDIT COPY / NUMBERS / COLORS
+  TO EDIT COPY / NUMBER / COLORS
   Everything lives in the EDIT HERE block just below — change the values
-  between the quotes. Tokens are swapped in at render:
-    {count}   → sellout_count   (bold line)
-    {n}       → buyers_count     (activity line)
-    {stock}   → stock_count      (low-stock line)
-    {flavour} → flavour_name     (low-stock line)
+  between the quotes. Token {count} → sellout_count in the bold line.
   Set any text line to '' (empty) to hide it. Icon: 'check' or 'box'.
   ============================================================================
 {%- endcomment -%}
@@ -28,13 +23,7 @@
 
   assign sellout_count = 3
   assign heading       = 'Sold out {count}x — restocked by popular demand.'
-
-  assign buyers_count  = 47
-  assign activity_line = '{n} bought in the last 24 hours.'
-
-  assign stock_count   = 12
-  assign flavour_name  = 'Arctic Mint'
-  assign lowstock_line = 'Only {stock} left in {flavour} — restocking soon.'
+  assign subtext       = 'Selling fast again — most people grab the 3-pack.'
 
   assign pill_bg       = '#3FA34D'
   assign pill_text     = '#FFFFFF'
@@ -44,20 +33,19 @@
   assign margin_top    = 12
   assign margin_bottom = 12
 
-  assign heading  = heading       | replace: '{count}', sellout_count
-  assign activity = activity_line | replace: '{n}', buyers_count
-  assign lowstock = lowstock_line | replace: '{stock}', stock_count | replace: '{flavour}', flavour_name
+  assign heading = heading | replace: '{count}', sellout_count
 -%}
 
 <style>
   .rb-badge {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: 5px;
     background: transparent;
     font-family: inherit;
-    margin: {{ margin_top }}px 0 {{ margin_bottom }}px;
+    margin: {{ margin_top }}px auto {{ margin_bottom }}px;
   }
   .rb-badge__pill {
     display: inline-flex;
@@ -74,7 +62,6 @@
     white-space: nowrap;
   }
   .rb-badge__pill svg { width: 14px; height: 14px; display: block; flex: 0 0 auto; }
-  .rb-badge__lines { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .rb-badge__heading {
     color: {{ heading_color }};
     font-size: 15px;
@@ -115,9 +102,6 @@
     <span>{{ badge_label | escape }}</span>
   </span>
 
-  <div class="rb-badge__lines">
-    <p class="rb-badge__heading">{{ heading }}</p>
-    {%- if activity != blank -%}<p class="rb-badge__sub">{{ activity }}</p>{%- endif -%}
-    {%- if lowstock != blank -%}<p class="rb-badge__sub">{{ lowstock }}</p>{%- endif -%}
-  </div>
+  <p class="rb-badge__heading">{{ heading }}</p>
+  {%- if subtext != blank -%}<p class="rb-badge__sub">{{ subtext }}</p>{%- endif -%}
 </div>
