@@ -8,12 +8,10 @@
   Theme editor → Product template → Add block → "Custom Liquid" → paste
   this whole file into the code box → Save. Left-aligned, borderless.
 
-  LAYOUT
-  [✓ Restocked]  Sold out 3x — restocked by popular demand.
-                 Selling fast — most grab the 3-pack.
-  The pill sits in its own left column, vertically CENTERED between the two
-  text lines. The two sentences stack on the right; subtext lines up under
-  the headline text.
+  LAYOUT (left-aligned stack, pill on TOP as the headline)
+  [✓ Restocked]
+  Sold out 3x — restocked by popular demand.
+  Selling fast — most grab the 3-pack.
 
   TO EDIT COPY / NUMBER / COLORS
   Everything lives in the EDIT HERE block just below — change the values
@@ -44,20 +42,16 @@
 
 <style>
   .rb-badge {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    column-gap: 10px;
-    row-gap: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 6px;
     background: transparent;
     font-family: inherit;
-    text-align: left;
     margin: {{ margin_top }}px 0 {{ margin_bottom }}px;
   }
   .rb-badge__pill {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    align-self: center;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -72,9 +66,8 @@
     white-space: nowrap;
   }
   .rb-badge__pill svg { width: 14px; height: 14px; display: block; flex: 0 0 auto; }
+  .rb-badge__text { display: flex; flex-direction: column; gap: 2px; }
   .rb-badge__heading {
-    grid-column: 2;
-    grid-row: 1;
     color: {{ heading_color }};
     font-size: 15px;
     font-weight: 700;
@@ -82,8 +75,6 @@
     margin: 0;
   }
   .rb-badge__sub {
-    grid-column: 2;
-    grid-row: 2;
     color: {{ subtext_color }};
     font-size: 13px;
     font-weight: 400;
@@ -116,6 +107,8 @@
     <span>{{ badge_label | escape }}</span>
   </span>
 
-  <p class="rb-badge__heading">{{ heading }}</p>
-  {%- if subtext != blank -%}<p class="rb-badge__sub">{{ subtext }}</p>{%- endif -%}
+  <div class="rb-badge__text">
+    <p class="rb-badge__heading">{{ heading }}</p>
+    {%- if subtext != blank -%}<p class="rb-badge__sub">{{ subtext }}</p>{%- endif -%}
+  </div>
 </div>
