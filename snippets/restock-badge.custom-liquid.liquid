@@ -11,18 +11,18 @@
   reuse it (safe to duplicate).
 
   TO EDIT COPY / COLORS
-  Everything is in the "EDIT HERE" block just below. Change the values
+  Everything is in the EDIT HERE block just below. Change the values
   between the quotes. {count} in the heading is replaced by sellout_count.
+  For the icon, set icon_style to 'check' or 'box'.
   No schema — Custom Liquid blocks don't support one — so this is the only
   place you tune it.
   ============================================================================
 {%- endcomment -%}
 
 {%- liquid
-  # ===== EDIT HERE =========================================================
   assign badge_label   = 'Restocked'
   assign show_icon     = true
-  assign icon_style    = 'check'            # 'check' or 'box'
+  assign icon_style    = 'check'
   assign sellout_count = 3
   assign heading       = 'Sold out {count}x — restocked by popular demand.'
   assign subtext       = 'Selling fast again — most people grab the 3-pack.'
@@ -35,7 +35,6 @@
 
   assign margin_top    = 10
   assign margin_bottom = 12
-  # ===== END EDIT ==========================================================
 
   assign heading = heading | replace: '{count}', sellout_count
 -%}
