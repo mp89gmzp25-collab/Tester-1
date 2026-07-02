@@ -3,73 +3,57 @@
   RESTOCK / VALIDITY BADGE  —  Dova Probiotics Oral Spray PDP
   ============================================================================
 
-  WHAT IT IS
-  A social-proof badge that signals the product sells out and gets restocked
-  by demand. Answers the buyer's "is it legit?" gut-check and adds light,
-  honest urgency. No fake timers.
-
   WHERE TO PLACE IT
-  Theme editor → your Product template → "Add section" → "Restock badge".
-  Drag it directly UNDER the product title. You can add a second copy above
-  the bundle / pack selector if you want the reinforcement.
+  Theme editor → Product template → "Add section" → "Restock badge".
+  Drop it directly UNDER the emoji-benefit bullets and ABOVE the
+  "Unlock Bigger Savings" header. Borderless — it sits inline, no card.
 
   WHICH SETTING MAPS TO WHICH LINE
   ┌────────────────────────┬──────────────────────────────────────────────┐
   │ Setting                │ Controls                                       │
   ├────────────────────────┼──────────────────────────────────────────────┤
-  │ Badge label            │ Text inside the green pill ("Restocked")       │
-  │ Show icon              │ Toggles the checkmark/box glyph in the pill    │
-  │ Icon style             │ check  ▸ ✓   |   box ▸ 📦-style box glyph      │
-  │ Sell-out count         │ The number injected where {count} appears      │
-  │ Heading (bold, black)  │ Primary validity line. Use {count} as a token  │
-  │                        │   e.g. "Sold out {count}x — restocked by ..."  │
-  │ Subtext (grey, small)  │ Secondary light-urgency / stock-up nudge       │
-  ├────────────────────────┼──────────────────────────────────────────────┤
-  │ Colors (Card / Pill /  │ All brand colors are editable so you can tune  │
-  │  Heading / Subtext)    │   without touching code.                       │
+  │ Badge label            │ Text in the green pill ("Restocked")           │
+  │ Show icon / Icon style │ The ✓ (or box) glyph inside the pill           │
+  │ Sell-out count         │ Number for {count} in the bold line            │
+  │ Heading (bold, black)  │ Line 2. Use {count} for the sell-out number    │
+  │ Buyers count           │ Number for {n} in the activity line            │
+  │ Activity line (grey)   │ Line 3. Use {n} for the buyers number          │
+  │ Stock count            │ Number for {stock} in the low-stock line       │
+  │ Flavour name           │ Text for {flavour} in the low-stock line       │
+  │ Low-stock line (grey)  │ Line 4. Use {stock} and {flavour} as tokens    │
+  │ Colors / Spacing       │ Pill + text colors, top/bottom spacing         │
   └────────────────────────┴──────────────────────────────────────────────┘
 
-  Copy tip: keep {count} in the Heading — the Sell-out count number is
-  substituted in at render so you only edit the number in one place.
+  Tokens ({count}, {n}, {stock}, {flavour}) are swapped in at render, so
+  you only ever edit each number/name in its own field.
   ============================================================================
 {%- endcomment -%}
 
 {%- liquid
   assign s = section.settings
-  assign heading = s.heading | replace: '{count}', s.sellout_count
+  assign heading  = s.heading       | replace: '{count}', s.sellout_count
+  assign activity = s.activity_line | replace: '{n}', s.buyers_count
+  assign lowstock = s.lowstock_line | replace: '{stock}', s.stock_count | replace: '{flavour}', s.flavour_name
 -%}
 
 {%- style -%}
-  #restock-badge-{{ section.id }} {
-    --rb-card-bg: {{ s.card_bg }};
-    --rb-pill-bg: {{ s.pill_bg }};
-    --rb-pill-text: {{ s.pill_text }};
-    --rb-heading: {{ s.heading_color }};
-    --rb-subtext: {{ s.subtext_color }};
-    --rb-radius: 16px;
-  }
-
-  #restock-badge-{{ section.id }} .rb-card {
+  #restock-badge-{{ section.id }} .rb-badge {
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
-    background: var(--rb-card-bg);
-    border-radius: var(--rb-radius);
-    padding: 14px 16px;
-    box-shadow: 0 2px 10px rgba(16, 24, 40, 0.08);
-    /* inherit the theme font stack — no third-party fonts */
+    gap: 5px;
+    /* borderless: no card background, border, or shadow */
+    background: transparent;
     font-family: inherit;
-    margin-top: {{ s.margin_top }}px;
-    margin-bottom: {{ s.margin_bottom }}px;
+    margin: {{ s.margin_top }}px 0 {{ s.margin_bottom }}px;
   }
 
   #restock-badge-{{ section.id }} .rb-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    flex: 0 0 auto;
-    background: var(--rb-pill-bg);
-    color: var(--rb-pill-text);
+    background: {{ s.pill_bg }};
+    color: {{ s.pill_text }};
     border-radius: 999px;
     padding: 5px 11px 5px 9px;
     font-size: 13px;
@@ -86,54 +70,50 @@
     flex: 0 0 auto;
   }
 
-  #restock-badge-{{ section.id }} .rb-copy {
+  #restock-badge-{{ section.id }} .rb-lines {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     min-width: 0;
   }
 
   #restock-badge-{{ section.id }} .rb-heading {
-    color: var(--rb-heading);
+    color: {{ s.heading_color }};
     font-size: 15px;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.25;
     margin: 0;
   }
 
-  #restock-badge-{{ section.id }} .rb-subtext {
-    color: var(--rb-subtext);
+  #restock-badge-{{ section.id }} .rb-sub {
+    color: {{ s.subtext_color }};
     font-size: 13px;
     font-weight: 400;
-    line-height: 1.35;
+    line-height: 1.25;
     margin: 0;
   }
 
-  /* Scale up gently on larger viewports; mobile-first defaults above. */
   @media (min-width: 750px) {
-    #restock-badge-{{ section.id }} .rb-card { padding: 16px 18px; gap: 14px; }
     #restock-badge-{{ section.id }} .rb-heading { font-size: 16px; }
-    #restock-badge-{{ section.id }} .rb-subtext { font-size: 14px; }
+    #restock-badge-{{ section.id }} .rb-sub { font-size: 14px; }
   }
 {%- endstyle -%}
 
-<div id="restock-badge-{{ section.id }}" class="rb-section">
-  <div class="rb-card" role="group" aria-label="{{ s.badge_label | escape }}: {{ heading | strip_html | escape }}">
+<div id="restock-badge-{{ section.id }}">
+  <div class="rb-badge" role="group" aria-label="{{ s.badge_label | escape }}: {{ heading | strip_html | escape }}">
 
     <span class="rb-pill">
       {%- if s.show_icon -%}
         {%- if s.icon_style == 'box' -%}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-               stroke-linecap="round" stroke-linejoin="round" role="img"
-               aria-label="Restocked package">
+               stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Restocked package">
             <path d="M21 8l-9-5-9 5 9 5 9-5z"/>
             <path d="M3 8v8l9 5 9-5V8"/>
             <path d="M12 13v8"/>
           </svg>
         {%- else -%}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
-               stroke-linecap="round" stroke-linejoin="round" role="img"
-               aria-label="Verified restock">
+               stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Verified restock">
             <path d="M20 6L9 17l-5-5"/>
           </svg>
         {%- endif -%}
@@ -141,11 +121,10 @@
       <span>{{ s.badge_label | escape }}</span>
     </span>
 
-    <div class="rb-copy">
+    <div class="rb-lines">
       <p class="rb-heading">{{ heading }}</p>
-      {%- if s.subtext != blank -%}
-        <p class="rb-subtext">{{ s.subtext }}</p>
-      {%- endif -%}
+      {%- if activity != blank -%}<p class="rb-sub">{{ activity }}</p>{%- endif -%}
+      {%- if lowstock != blank -%}<p class="rb-sub">{{ lowstock }}</p>{%- endif -%}
     </div>
 
   </div>
@@ -157,10 +136,7 @@
   "tag": "section",
   "class": "restock-badge-section",
   "settings": [
-    {
-      "type": "header",
-      "content": "Badge pill"
-    },
+    { "type": "header", "content": "Badge pill" },
     {
       "type": "text",
       "id": "badge_label",
@@ -168,12 +144,7 @@
       "info": "Text inside the green pill.",
       "default": "Restocked"
     },
-    {
-      "type": "checkbox",
-      "id": "show_icon",
-      "label": "Show icon",
-      "default": true
-    },
+    { "type": "checkbox", "id": "show_icon", "label": "Show icon", "default": true },
     {
       "type": "select",
       "id": "icon_style",
@@ -184,94 +155,83 @@
       ],
       "default": "check"
     },
-    {
-      "type": "header",
-      "content": "Copy"
-    },
+
+    { "type": "header", "content": "Line 2 — validity claim" },
     {
       "type": "number",
       "id": "sellout_count",
       "label": "Sell-out count",
-      "info": "The number of times it sold out. Injected wherever {count} appears in the heading.",
+      "info": "Replaces {count} in the heading.",
       "default": 3
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading (bold, black)",
-      "info": "Primary validity line. Use {count} as a placeholder for the sell-out count.",
+      "info": "Use {count} as the sell-out number token.",
       "default": "Sold out {count}x — restocked by popular demand."
+    },
+
+    { "type": "header", "content": "Line 3 — live activity" },
+    {
+      "type": "number",
+      "id": "buyers_count",
+      "label": "Buyers count",
+      "info": "Replaces {n} in the activity line.",
+      "default": 47
     },
     {
       "type": "text",
-      "id": "subtext",
-      "label": "Subtext (grey, smaller)",
-      "info": "Secondary light-urgency / stock-up nudge.",
-      "default": "Selling fast again — most people grab the 3-pack."
+      "id": "activity_line",
+      "label": "Activity line (grey)",
+      "info": "Use {n} as the buyers number token. Leave blank to hide.",
+      "default": "{n} bought in the last 24 hours."
+    },
+
+    { "type": "header", "content": "Line 4 — low stock" },
+    {
+      "type": "number",
+      "id": "stock_count",
+      "label": "Stock count",
+      "info": "Replaces {stock} in the low-stock line.",
+      "default": 12
     },
     {
-      "type": "header",
-      "content": "Colors"
+      "type": "text",
+      "id": "flavour_name",
+      "label": "Flavour name",
+      "info": "Replaces {flavour} in the low-stock line.",
+      "default": "Arctic Mint"
     },
     {
-      "type": "color",
-      "id": "card_bg",
-      "label": "Card background",
-      "default": "#FFFFFF"
+      "type": "text",
+      "id": "lowstock_line",
+      "label": "Low-stock line (grey)",
+      "info": "Use {stock} and {flavour} as tokens. Leave blank to hide.",
+      "default": "Only {stock} left in {flavour} — restocking soon."
     },
-    {
-      "type": "color",
-      "id": "pill_bg",
-      "label": "Pill background",
-      "default": "#3FA34D"
-    },
-    {
-      "type": "color",
-      "id": "pill_text",
-      "label": "Pill text / icon",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "heading_color",
-      "label": "Heading text",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "subtext_color",
-      "label": "Subtext",
-      "default": "#6B7280"
-    },
-    {
-      "type": "header",
-      "content": "Spacing"
-    },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "pill_bg", "label": "Pill background", "default": "#3FA34D" },
+    { "type": "color", "id": "pill_text", "label": "Pill text / icon", "default": "#FFFFFF" },
+    { "type": "color", "id": "heading_color", "label": "Heading text", "default": "#000000" },
+    { "type": "color", "id": "subtext_color", "label": "Grey subtext", "default": "#6B7280" },
+
+    { "type": "header", "content": "Spacing" },
     {
       "type": "range",
       "id": "margin_top",
       "label": "Top spacing",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 10
+      "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12
     },
     {
       "type": "range",
       "id": "margin_bottom",
       "label": "Bottom spacing",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 12
+      "info": "Keep small so it sequences into 'Unlock Bigger Savings'.",
+      "min": 0, "max": 32, "step": 2, "unit": "px", "default": 12
     }
   ],
-  "presets": [
-    {
-      "name": "Restock badge"
-    }
-  ]
+  "presets": [ { "name": "Restock badge" } ]
 }
 {% endschema %}
