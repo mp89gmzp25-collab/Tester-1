@@ -1,40 +1,32 @@
 {%- comment -%}
   ============================================================================
   KACHING BUNDLES — inject the TRUE single-unit price into the
-  "One-time purchase" toggle label.  (Custom Liquid, drop-in)
+  "One-time purchase" toggle label.  (Custom Liquid, drop-in) — v2 self-detect
   Dova Probiotics Oral Spray PDP · Shopify · Navidium theme
   ============================================================================
 
   WHAT IT DOES
-  Copies the price string the THEME already renders for the current variant
-  (already currency/market-correct) and drops it into the Kaching one-time
-  toggle. Because it reads the theme price — not the widget — the number is
-  independent of which bundle bar is selected, and it re-copies on variant
-  change and whenever the widget re-renders.
+  Copies the price string the THEME renders for the current variant (already
+  currency/market-correct) into the Kaching one-time toggle. Reads the theme
+  price — NOT the widget — so it's independent of the selected bundle bar,
+  and re-copies on variant change / widget re-render.
 
-  TWO SETUP STEPS (both required)
-  1) In the Kaching app → Subscriptions block → "One-time title" field, type
-     your label with the token where the price should appear, e.g.:
-         One-time purchase %%PRICE%%
-     (Static text is fine; you do NOT use the {} picker for the price.)
+  v2 CHANGES (why your paste showed the raw %%PRICE%%)
+  - Accepts the theme price even when it's HIDDEN behind the bundle widget
+    (the text is still in the DOM and still market-converted).
+  - IGNORES anything inside the Kaching widget, so it can't grab a bundle
+    bar's price by accident.
+  - Set CONFIG.debug = true to log what it found (or didn't) in the console.
 
-  2) Set CONFIG.themePriceSelectors below to your PDP's real price element.
-     Inspect the product price on the live page, copy its selector, and put
-     it FIRST in the list. Good defaults for common/Dawn-like themes are
-     pre-filled as fallbacks.
+  SETUP
+  1) App → Subscriptions → "One-time title" = exactly:  One-time purchase %%PRICE%%
+     (plain static text — do NOT use the {} picker for the price). Save + Publish.
+  2) Product template → add a "Custom Liquid" block → paste this whole file.
+     Usually works with the pre-filled selectors. If not, set debug=true, open
+     the product page console, and follow the logged hint.
 
-  WHERE TO PLACE IT
-  Add a "Custom Liquid" block to the PRODUCT template (anywhere on the page —
-  it only runs JS) and paste this whole file in. One instance per PDP.
-
-  OFFSET (+$10 etc.)
-  Do it by raising the Shopify product price (as you planned). Do NOT add
-  math here — parsing a localized money string breaks across markets.
-
-  NOTE ON PRICE = product price
-  This shows the current Shopify product price for the selected variant, in
-  the shopper's currency. If you want it to differ from the product price,
-  change the product price — this label mirrors it by design.
+  OFFSET (+$10 etc.): raise the Shopify product price. Never do money math here
+  — parsing a localized string breaks across markets.
   ============================================================================
 {%- endcomment -%}
 
@@ -43,69 +35,81 @@
   'use strict';
 
   var CONFIG = {
-    // The literal token you placed in the app's "One-time title" field.
     token: '%%PRICE%%',
 
-    // Your PDP's real price element(s). First visible match with text wins.
-    // >>> Put YOUR inspected selector first; keep the rest as fallbacks. <<<
+    // Theme price element(s). First good match wins (visible preferred, but
+    // HIDDEN is accepted). Add your theme's selector to the FRONT if needed.
     themePriceSelectors: [
-      '.price__container .price-item--sale:not([hidden])',
       '.price__container .price-item--regular',
-      '.price--on-sale .price-item--sale',
-      '.price-item--sale:not([hidden])',
+      '.price__container .price-item--sale:not([hidden])',
       '.price-item--regular',
+      '.price-item--sale:not([hidden])',
+      '.price__regular .price-item',
       '[data-product-price]',
       '.product__price',
+      '.product-price',
       '.price'
     ],
 
-    // Optional: restrict the token search to a widget container selector.
-    // Leave '' to search the whole page (recommended if unsure).
-    restrictTo: '',
+    // Subtrees to EXCLUDE from the price search (the bundle widget itself).
+    excludeSelectors:
+      '[class*="kaching" i],[id*="kaching" i],[class*="qbf" i],[class*="qb-" i],' +
+      '[data-kaching-bundles],[class*="bundle-deal" i],[class*="kb-widget" i],' +
+      '[class*="kaCrafter" i]',
 
+    debug: false,
     debounceMs: 120
   };
 
+  var MONEY = /(?:[£$€¥₹]|USD|GBP|EUR|CAD|AUD)\s?\d|\d[.,]\d{2}/i;
   var SKIP = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1 };
 
+  function log() { if (CONFIG.debug && window.console) console.log.apply(console, ['[onetime]'].concat([].slice.call(arguments))); }
+
   function isVisible(el) {
-    if (!el || el.hidden) return false;
-    var rects = el.getClientRects();
-    return !!(rects && rects.length);
+    if (!el) return false;
+    var r = el.getClientRects();
+    return !!(r && r.length);
   }
 
-  // Read the theme's already-localized price for the current variant.
+  function insideWidget(el) {
+    return !!(el.closest && el.closest(CONFIG.excludeSelectors));
+  }
+
+  // Find the theme's single-unit price, hidden or not, outside the widget.
   function getThemePrice() {
-    var scopes = [document.querySelector('main'), document.getElementById('MainContent'), document];
-    for (var s = 0; s < scopes.length; s++) {
-      var scope = scopes[s];
-      if (!scope) continue;
-      for (var i = 0; i < CONFIG.themePriceSelectors.length; i++) {
-        var els = scope.querySelectorAll(CONFIG.themePriceSelectors[i]);
-        for (var j = 0; j < els.length; j++) {
-          var txt = (els[j].textContent || '').trim();
-          if (txt && isVisible(els[j])) return txt.replace(/\s+/g, ' ');
-        }
+    var candidates = [];
+    for (var i = 0; i < CONFIG.themePriceSelectors.length; i++) {
+      var els;
+      try { els = document.querySelectorAll(CONFIG.themePriceSelectors[i]); }
+      catch (e) { continue; }
+      for (var j = 0; j < els.length; j++) {
+        var el = els[j];
+        if (insideWidget(el)) continue;
+        var txt = (el.textContent || '').trim().replace(/\s+/g, ' ');
+        if (!txt || !MONEY.test(txt)) continue;
+        candidates.push({ el: el, txt: txt, visible: isVisible(el), rank: i });
       }
     }
-    return '';
+    if (!candidates.length) {
+      log('NO price found. Add your theme price selector to themePriceSelectors[0]. ' +
+          'Run this in console to find it:',
+          "[...document.querySelectorAll('body *')].filter(e=>e.children.length===0&&/^[£$€]\\s?\\d/.test(e.textContent.trim())).map(e=>e.tagName+'.'+[...e.classList].join('.')+' → '+e.textContent.trim())");
+      return '';
+    }
+    // Prefer a visible node; among equals, the earliest (most specific) selector.
+    candidates.sort(function (a, b) {
+      if (a.visible !== b.visible) return a.visible ? -1 : 1;
+      return a.rank - b.rank;
+    });
+    log('price =', candidates[0].txt, '(visible:', candidates[0].visible + ')', candidates[0].el);
+    return candidates[0].txt;
   }
 
-  // Collect the light-DOM root plus any OPEN shadow roots (widgets sometimes
-  // render inside a shadow root). Cross-origin iframes can't be reached — if
-  // the toggle lives in one, tell your dev and this needs a different hook.
   function getRoots() {
-    var list = [];
-    if (CONFIG.restrictTo) {
-      var host = document.querySelector(CONFIG.restrictTo);
-      if (host) { list.push(host); if (host.shadowRoot) list.push(host.shadowRoot); }
-    } else {
-      list.push(document.body);
-    }
+    var list = [document.body];
     var all = document.querySelectorAll('*');
-    for (var i = 0; i < all.length; i++) {
-      if (all[i].shadowRoot) list.push(all[i].shadowRoot);
-    }
+    for (var i = 0; i < all.length; i++) if (all[i].shadowRoot) list.push(all[i].shadowRoot);
     return list;
   }
 
@@ -113,8 +117,8 @@
     var out = [], roots = getRoots();
     for (var i = 0; i < roots.length; i++) {
       if (!roots[i].querySelectorAll) continue;
-      var found = roots[i].querySelectorAll(sel);
-      for (var j = 0; j < found.length; j++) out.push(found[j]);
+      var f = roots[i].querySelectorAll(sel);
+      for (var j = 0; j < f.length; j++) out.push(f[j]);
     }
     return out;
   }
@@ -123,16 +127,14 @@
     var price = getThemePrice();
     if (!price) return;
 
-    // 1) If we've already injected the price span(s), just refresh the text.
     var existing = queryAllRoots('[data-onetime-price]');
     if (existing.length) {
       for (var i = 0; i < existing.length; i++) {
-        if (existing[i].textContent !== price) existing[i].textContent = price; // idempotent — no infinite loop
+        if (existing[i].textContent !== price) existing[i].textContent = price; // idempotent
       }
       return;
     }
 
-    // 2) Otherwise find the token in a text node and wrap the price in a span.
     var roots = getRoots();
     for (var r = 0; r < roots.length; r++) {
       var rootNode = roots[r].body ? roots[r].body : roots[r];
@@ -148,40 +150,34 @@
       if (!node) continue;
 
       var idx = node.nodeValue.indexOf(CONFIG.token);
-      var before = node.nodeValue.slice(0, idx);
-      var after = node.nodeValue.slice(idx + CONFIG.token.length);
       var span = document.createElement('span');
       span.setAttribute('data-onetime-price', '');
       span.textContent = price;
       var frag = document.createDocumentFragment();
+      var before = node.nodeValue.slice(0, idx);
+      var after = node.nodeValue.slice(idx + CONFIG.token.length);
       if (before) frag.appendChild(document.createTextNode(before));
       frag.appendChild(span);
       if (after) frag.appendChild(document.createTextNode(after));
       node.parentNode.replaceChild(frag, node);
-      return; // one injection per pass; the observer picks up any others
+      log('injected into one-time label');
+      return;
     }
+    log('price found but token %%PRICE%% not in DOM yet — check the One-time title field.');
   }
 
   var timer = null;
-  function schedule() {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(injectOrUpdate, CONFIG.debounceMs);
-  }
+  function schedule() { if (timer) clearTimeout(timer); timer = setTimeout(injectOrUpdate, CONFIG.debounceMs); }
 
-  // Initial + late widget renders.
   schedule();
   document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', schedule);
   [250, 800, 1600, 3200].forEach(function (ms) { setTimeout(schedule, ms); });
 
-  // Widget re-render AND theme price/variant updates both surface as DOM
-  // mutations — one observer covers both. Writes are idempotent so this
-  // converges instead of looping.
   new MutationObserver(schedule).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true
   });
 
-  // Extra belt-and-braces for themes that fire explicit variant events.
   ['variant:change', 'variantChange', 'product:variant-change', 'on:variant:change', 'change']
     .forEach(function (ev) { document.addEventListener(ev, schedule, true); });
 })();
