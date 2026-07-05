@@ -1,32 +1,35 @@
 {%- comment -%}
   ============================================================================
-  KACHING BUNDLES — inject the TRUE single-unit price into the
-  "One-time purchase" toggle label.  (Custom Liquid, drop-in) — v2 self-detect
+  KACHING BUNDLES — TIER-DRIVEN one-time price.  (Custom Liquid, drop-in) v3
   Dova Probiotics Oral Spray PDP · Shopify · Navidium theme
   ============================================================================
 
-  WHAT IT DOES
-  Copies the price string the THEME renders for the current variant (already
-  currency/market-correct) into the Kaching one-time toggle. Reads the theme
-  price — NOT the widget — so it's independent of the selected bundle bar,
-  and re-copies on variant change / widget re-render.
+  BEHAVIOUR
+  - Watches which bundle bar is currently SELECTED in the Kaching widget.
+  - Reads that bar's DISCOUNTED price (.kaching-bundles__bar-price).
+  - Adds CONFIG.offset (default 10) in the displayed currency.
+  - Renders the result where %%PRICE%% sits in the one-time toggle.
+  - Recomputes live on every tier change (click + attribute observer + poll).
 
-  v2 CHANGES (why your paste showed the raw %%PRICE%%)
-  - Accepts the theme price even when it's HIDDEN behind the bundle widget
-    (the text is still in the DOM and still market-converted).
-  - IGNORES anything inside the Kaching widget, so it can't grab a bundle
-    bar's price by accident.
-  - Set CONFIG.debug = true to log what it found (or didn't) in the console.
+  Verify (GBP): Buy 1 £22.95 → £32.95 · Buy 2 £44.95 → £54.95 · Buy 3 £59.95 → £69.95
 
   SETUP
   1) App → Subscriptions → "One-time title" = exactly:  One-time purchase %%PRICE%%
-     (plain static text — do NOT use the {} picker for the price). Save + Publish.
-  2) Product template → add a "Custom Liquid" block → paste this whole file.
-     Usually works with the pre-filled selectors. If not, set debug=true, open
-     the product page console, and follow the logged hint.
+     (plain static text — no {} picker). Save + Publish.
+  2) Product template → "Custom Liquid" block → paste this whole file.
+  3) Set debug=true if the label doesn't update — the console logs the
+     selected bar it found and the price math.
 
-  OFFSET (+$10 etc.): raise the Shopify product price. Never do money math here
-  — parsing a localized string breaks across markets.
+  OFFSET / CURRENCY NOTE
+  offset is added as a NUMBER in whatever currency the bar shows: +10 → +£10
+  in GBP, +$10 in USD, +€10 in EUR. This matches the merchant's per-tier
+  targets. It is NOT an FX-converted £10 — a true converted uplift would need
+  a live rate source; say so if that's wanted.
+
+  SELECTED-BAR DETECTION
+  Tries known "selected" classes/attributes, then a checked radio inside a
+  bar, then any bar whose class looks selected. If none match, debug logs
+  every bar's class so you can send me the exact hook.
   ============================================================================
 {%- endcomment -%}
 
@@ -36,123 +39,137 @@
 
   var CONFIG = {
     token: '%%PRICE%%',
+    offset: 10,                                   // added in the displayed currency
 
-    // PRIMARY SOURCE — this PDP has NO theme price element (the Kaching widget
-    // replaced it). The single-unit price is the FIRST bundle bar's FULL
-    // (pre-discount) price: Bar #1 = "Buy 1" = 1 unit = the variant price,
-    // already converted for the active market. We read a FIXED bar (index 0),
-    // NOT the selected one, so it's independent of which tier is highlighted.
-    // ASSUMPTION: Bar #1 is the 1-unit bar. If you reorder bars so Buy 1 is not
-    // first, change priceSelectorIndex to that bar's position (0-based).
-    priceSelector: '.kaching-bundles__bar-full-price',
-    priceSelectorIndex: 0,
+    barSelector: '.kaching-bundles__bar',
+    barPriceSelector: '.kaching-bundles__bar-price',   // discounted price (NOT -bar-full-price)
 
-    // Fallback theme price element(s) if priceSelector ever returns nothing.
-    themePriceSelectors: [
-      '.price__container .price-item--regular',
-      '.price__container .price-item--sale:not([hidden])',
-      '.price-item--regular',
-      '.price-item--sale:not([hidden])',
-      '.price__regular .price-item',
-      '[data-product-price]',
-      '.product__price',
-      '.product-price',
-      '.price'
+    // Known ways Kaching may mark the active bar. First match wins; the
+    // detector also falls back to checked radios / "selected"-looking classes.
+    selectedBarSelectors: [
+      '.kaching-bundles__bar--selected',
+      '.kaching-bundles__bar.is-selected',
+      '.kaching-bundles__bar.selected',
+      '.kaching-bundles__bar--active',
+      '.kaching-bundles__bar[aria-selected="true"]',
+      '.kaching-bundles__bar[aria-checked="true"]',
+      '.kaching-bundles__bar[data-selected="true"]'
     ],
 
-    // Subtrees to EXCLUDE from the price search (the bundle widget itself).
-    excludeSelectors:
-      '[class*="kaching" i],[id*="kaching" i],[class*="qbf" i],[class*="qb-" i],' +
-      '[data-kaching-bundles],[class*="bundle-deal" i],[class*="kb-widget" i],' +
-      '[class*="kaCrafter" i]',
-
     debug: false,
-    debounceMs: 120
+    debounceMs: 90
   };
 
-  var MONEY = /(?:[£$€¥₹]|USD|GBP|EUR|CAD|AUD)\s?\d|\d[.,]\d{2}/i;
   var SKIP = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1 };
 
   function log() { if (CONFIG.debug && window.console) console.log.apply(console, ['[onetime]'].concat([].slice.call(arguments))); }
+  function clean(s) { return (s || '').trim().replace(/\s+/g, ' '); }
 
-  function isVisible(el) {
-    if (!el) return false;
-    var r = el.getClientRects();
-    return !!(r && r.length);
-  }
+  // ---- locale-aware money + offset -----------------------------------------
+  // Parses a rendered price string, adds `offset`, and reformats keeping the
+  // same currency symbol/placement, decimal char, grouping char and decimals.
+  function addOffset(raw, offset) {
+    var s = String(raw).trim();
+    var m = s.match(/^([^\d]*?)(\d[\d.,   ]*\d|\d)([^\d]*)$/);
+    if (!m) return null;
+    var prefix = m[1], numRaw = m[2], suffix = m[3];
 
-  function insideWidget(el) {
-    return !!(el.closest && el.closest(CONFIG.excludeSelectors));
-  }
+    var hasComma = numRaw.indexOf(',') !== -1;
+    var hasDot = numRaw.indexOf('.') !== -1;
 
-  // Find the single-unit price.
-  function getThemePrice() {
-    // 1) Preferred: the fixed bundle bar's full (pre-discount) unit price.
-    if (CONFIG.priceSelector) {
-      var direct = document.querySelectorAll(CONFIG.priceSelector);
-      var pick = direct[CONFIG.priceSelectorIndex || 0];
-      if (pick) {
-        var ptxt = (pick.textContent || '').trim().replace(/\s+/g, ' ');
-        if (ptxt && MONEY.test(ptxt)) { log('price =', ptxt, '(from', CONFIG.priceSelector + '[' + (CONFIG.priceSelectorIndex || 0) + '])', pick); return ptxt; }
-      }
-      log('priceSelector matched nothing usable — trying theme fallbacks');
+    var decimalSep = '';
+    if (hasComma && hasDot) {
+      decimalSep = numRaw.lastIndexOf(',') > numRaw.lastIndexOf('.') ? ',' : '.';
+    } else if (hasComma || hasDot) {
+      var only = hasComma ? ',' : '.';
+      var occurrences = numRaw.split(only).length - 1;
+      var after = numRaw.slice(numRaw.lastIndexOf(only) + 1).replace(/[^\d]/g, '');
+      // Single separator followed by 3 digits, or repeated → grouping (integer).
+      decimalSep = (occurrences > 1 || after.length === 3) ? '' : only;
     }
 
-    // 2) Fallback: a theme price element, hidden or not, outside the widget.
-    var candidates = [];
-    for (var i = 0; i < CONFIG.themePriceSelectors.length; i++) {
-      var els;
-      try { els = document.querySelectorAll(CONFIG.themePriceSelectors[i]); }
-      catch (e) { continue; }
-      for (var j = 0; j < els.length; j++) {
-        var el = els[j];
-        if (insideWidget(el)) continue;
-        var txt = (el.textContent || '').trim().replace(/\s+/g, ' ');
-        if (!txt || !MONEY.test(txt)) continue;
-        candidates.push({ el: el, txt: txt, visible: isVisible(el), rank: i });
-      }
+    var decimals = decimalSep ? numRaw.slice(numRaw.lastIndexOf(decimalSep) + 1).replace(/[^\d]/g, '').length : 0;
+
+    // Grouping char to use when reformatting.
+    var spaceMatch = numRaw.match(/[   ]/);
+    var groupingSep;
+    if (decimalSep === ',') groupingSep = hasDot ? '.' : (spaceMatch ? spaceMatch[0] : '.');
+    else if (decimalSep === '.') groupingSep = hasComma ? ',' : (spaceMatch ? spaceMatch[0] : ',');
+    else groupingSep = (numRaw.match(/[.,   ]/) || [','])[0];
+
+    // Normalize to a JS float.
+    var normalized;
+    if (decimalSep) {
+      normalized = numRaw.replace(new RegExp('[^\\d' + (decimalSep === '.' ? '\\.' : decimalSep) + ']', 'g'), '');
+      normalized = normalized.replace(decimalSep, '.');
+    } else {
+      normalized = numRaw.replace(/[^\d]/g, '');
     }
-    if (!candidates.length) {
-      log('NO price found. Add your theme price selector to themePriceSelectors[0]. ' +
-          'Run this in console to find it:',
-          "[...document.querySelectorAll('body *')].filter(e=>e.children.length===0&&/^[£$€]\\s?\\d/.test(e.textContent.trim())).map(e=>e.tagName+'.'+[...e.classList].join('.')+' → '+e.textContent.trim())");
-      return '';
-    }
-    // Prefer a visible node; among equals, the earliest (most specific) selector.
-    candidates.sort(function (a, b) {
-      if (a.visible !== b.visible) return a.visible ? -1 : 1;
-      return a.rank - b.rank;
-    });
-    log('price =', candidates[0].txt, '(visible:', candidates[0].visible + ')', candidates[0].el);
-    return candidates[0].txt;
+    var value = parseFloat(normalized);
+    if (isNaN(value)) return null;
+
+    var fixed = (value + offset).toFixed(decimals);
+    var parts = fixed.split('.');
+    var intPart = parts[0];
+    var fracPart = parts[1] || '';
+    if (groupingSep) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, groupingSep);
+
+    return prefix + intPart + (decimals > 0 ? decimalSep + fracPart : '') + suffix;
   }
 
+  // ---- selected bar --------------------------------------------------------
+  function isSelected(bar) {
+    if (bar.matches) {
+      try { if (bar.matches(CONFIG.selectedBarSelectors.join(','))) return true; } catch (e) {}
+    }
+    if (/(?:selected|active|current|is-checked|checked)/i.test(bar.className || '')) return true;
+    if (bar.getAttribute && (bar.getAttribute('aria-selected') === 'true' ||
+        bar.getAttribute('aria-checked') === 'true' ||
+        bar.getAttribute('data-selected') === 'true')) return true;
+    if (bar.querySelector && bar.querySelector('input:checked, [aria-checked="true"]')) return true;
+    return false;
+  }
+
+  function getSelectedBar() {
+    var bars = document.querySelectorAll(CONFIG.barSelector);
+    if (!bars.length) { log('no bars found for', CONFIG.barSelector); return null; }
+    for (var i = 0; i < bars.length; i++) if (isSelected(bars[i])) return bars[i];
+    log('no bar looked selected. Bar classes:', [].map.call(bars, function (b) { return b.className; }));
+    return null;
+  }
+
+  function computeOneTimePrice() {
+    var bar = getSelectedBar();
+    if (!bar) return '';
+    var priceEl = bar.querySelector(CONFIG.barPriceSelector);
+    if (!priceEl) { log('selected bar has no', CONFIG.barPriceSelector); return ''; }
+    var raw = clean(priceEl.textContent);
+    var out = addOffset(raw, CONFIG.offset);
+    if (!out) { log('could not parse price:', raw); return ''; }
+    log('selected', raw, '+', CONFIG.offset, '=', out);
+    return out;
+  }
+
+  // ---- injection -----------------------------------------------------------
   function getRoots() {
     var list = [document.body];
     var all = document.querySelectorAll('*');
     for (var i = 0; i < all.length; i++) if (all[i].shadowRoot) list.push(all[i].shadowRoot);
     return list;
   }
-
   function queryAllRoots(sel) {
     var out = [], roots = getRoots();
-    for (var i = 0; i < roots.length; i++) {
-      if (!roots[i].querySelectorAll) continue;
-      var f = roots[i].querySelectorAll(sel);
-      for (var j = 0; j < f.length; j++) out.push(f[j]);
-    }
+    for (var i = 0; i < roots.length; i++) { if (!roots[i].querySelectorAll) continue; var f = roots[i].querySelectorAll(sel); for (var j = 0; j < f.length; j++) out.push(f[j]); }
     return out;
   }
 
   function injectOrUpdate() {
-    var price = getThemePrice();
+    var price = computeOneTimePrice();
     if (!price) return;
 
     var existing = queryAllRoots('[data-onetime-price]');
     if (existing.length) {
-      for (var i = 0; i < existing.length; i++) {
-        if (existing[i].textContent !== price) existing[i].textContent = price; // idempotent
-      }
+      for (var i = 0; i < existing.length; i++) if (existing[i].textContent !== price) existing[i].textContent = price;
       return;
     }
 
@@ -181,10 +198,9 @@
       frag.appendChild(span);
       if (after) frag.appendChild(document.createTextNode(after));
       node.parentNode.replaceChild(frag, node);
-      log('injected into one-time label');
+      log('injected');
       return;
     }
-    log('price found but token %%PRICE%% not in DOM yet — check the One-time title field.');
   }
 
   var timer = null;
@@ -193,13 +209,21 @@
   schedule();
   document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', schedule);
-  [250, 800, 1600, 3200].forEach(function (ms) { setTimeout(schedule, ms); });
 
+  // Tier changes: click on any bar…
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest(CONFIG.barSelector)) schedule();
+  }, true);
+
+  // …selected-state class/attr flips + widget re-render…
   new MutationObserver(schedule).observe(document.documentElement, {
-    childList: true, subtree: true, characterData: true
+    childList: true, subtree: true, characterData: true,
+    attributes: true, attributeFilter: ['class', 'aria-selected', 'aria-checked', 'data-selected']
   });
 
+  // …theme variant events, and a short startup poll for late render.
   ['variant:change', 'variantChange', 'product:variant-change', 'on:variant:change', 'change']
     .forEach(function (ev) { document.addEventListener(ev, schedule, true); });
+  var polls = 0, pid = setInterval(function () { schedule(); if (++polls >= 17) clearInterval(pid); }, 300); // ~5s
 })();
 </script>
