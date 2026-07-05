@@ -37,8 +37,17 @@
   var CONFIG = {
     token: '%%PRICE%%',
 
-    // Theme price element(s). First good match wins (visible preferred, but
-    // HIDDEN is accepted). Add your theme's selector to the FRONT if needed.
+    // PRIMARY SOURCE — this PDP has NO theme price element (the Kaching widget
+    // replaced it). The single-unit price is the FIRST bundle bar's FULL
+    // (pre-discount) price: Bar #1 = "Buy 1" = 1 unit = the variant price,
+    // already converted for the active market. We read a FIXED bar (index 0),
+    // NOT the selected one, so it's independent of which tier is highlighted.
+    // ASSUMPTION: Bar #1 is the 1-unit bar. If you reorder bars so Buy 1 is not
+    // first, change priceSelectorIndex to that bar's position (0-based).
+    priceSelector: '.kaching-bundles__bar-full-price',
+    priceSelectorIndex: 0,
+
+    // Fallback theme price element(s) if priceSelector ever returns nothing.
     themePriceSelectors: [
       '.price__container .price-item--regular',
       '.price__container .price-item--sale:not([hidden])',
@@ -76,8 +85,20 @@
     return !!(el.closest && el.closest(CONFIG.excludeSelectors));
   }
 
-  // Find the theme's single-unit price, hidden or not, outside the widget.
+  // Find the single-unit price.
   function getThemePrice() {
+    // 1) Preferred: the fixed bundle bar's full (pre-discount) unit price.
+    if (CONFIG.priceSelector) {
+      var direct = document.querySelectorAll(CONFIG.priceSelector);
+      var pick = direct[CONFIG.priceSelectorIndex || 0];
+      if (pick) {
+        var ptxt = (pick.textContent || '').trim().replace(/\s+/g, ' ');
+        if (ptxt && MONEY.test(ptxt)) { log('price =', ptxt, '(from', CONFIG.priceSelector + '[' + (CONFIG.priceSelectorIndex || 0) + '])', pick); return ptxt; }
+      }
+      log('priceSelector matched nothing usable — trying theme fallbacks');
+    }
+
+    // 2) Fallback: a theme price element, hidden or not, outside the widget.
     var candidates = [];
     for (var i = 0; i < CONFIG.themePriceSelectors.length; i++) {
       var els;
