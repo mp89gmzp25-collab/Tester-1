@@ -118,35 +118,86 @@
   }
 
   // ---- selected bar --------------------------------------------------------
-  function isSelected(bar) {
-    if (bar.matches) {
-      try { if (bar.matches(CONFIG.selectedBarSelectors.join(','))) return true; } catch (e) {}
+  // Returns a "why it's selected" reason string, or '' if this bar is not it.
+  function selectedReason(bar) {
+    try { if (bar.matches && bar.matches(CONFIG.selectedBarSelectors.join(','))) return 'known-selector'; } catch (e) {}
+    if (/(?:--selected|is-selected|\bselected\b|--active|is-active|\bactive\b|current|is-checked)/i.test(bar.className || '')) return 'class:' + bar.className;
+    if (bar.getAttribute) {
+      if (bar.getAttribute('aria-selected') === 'true') return 'aria-selected';
+      if (bar.getAttribute('aria-checked') === 'true') return 'aria-checked';
+      if (bar.getAttribute('data-selected') === 'true' || bar.getAttribute('data-selected') === '') return 'data-selected';
+      if (bar.getAttribute('data-active') === 'true') return 'data-active';
     }
-    if (/(?:selected|active|current|is-checked|checked)/i.test(bar.className || '')) return true;
-    if (bar.getAttribute && (bar.getAttribute('aria-selected') === 'true' ||
-        bar.getAttribute('aria-checked') === 'true' ||
-        bar.getAttribute('data-selected') === 'true')) return true;
-    if (bar.querySelector && bar.querySelector('input:checked, [aria-checked="true"]')) return true;
-    return false;
+    if (bar.querySelector) {
+      if (bar.querySelector('input:checked')) return 'input:checked';
+      if (bar.querySelector('[aria-checked="true"]')) return 'inner-aria-checked';
+      if (bar.querySelector('[class*="selected" i],[class*="is-active" i],[class*="--active" i]')) return 'inner-selected-class';
+    }
+    return '';
+  }
+
+  function borderWeight(bar) {
+    try {
+      var cs = getComputedStyle(bar);
+      return (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.outlineWidth) || 0) +
+             (/(?:inset|rgba?\()/.test(cs.boxShadow) && cs.boxShadow !== 'none' ? 3 : 0);
+    } catch (e) { return 0; }
   }
 
   function getSelectedBar() {
-    var bars = document.querySelectorAll(CONFIG.barSelector);
-    if (!bars.length) { log('no bars found for', CONFIG.barSelector); return null; }
-    for (var i = 0; i < bars.length; i++) if (isSelected(bars[i])) return bars[i];
-    log('no bar looked selected. Bar classes:', [].map.call(bars, function (b) { return b.className; }));
+    var bars = [].slice.call(document.querySelectorAll(CONFIG.barSelector));
+    if (!bars.length) { log('NO bars found for', CONFIG.barSelector, '— check barSelector'); return null; }
+
+    // 1) Explicit selection signals.
+    for (var i = 0; i < bars.length; i++) {
+      var reason = selectedReason(bars[i]);
+      if (reason) { log('selected bar = index', i, 'via', reason); return bars[i]; }
+    }
+
+    // 2) Visual fallback: the bar with the heaviest border/outline/shadow.
+    var maxI = -1, maxW = -1, tie = false;
+    for (var j = 0; j < bars.length; j++) {
+      var w = borderWeight(bars[j]);
+      if (w > maxW) { maxW = w; maxI = j; tie = false; }
+      else if (w === maxW) tie = true;
+    }
+    if (maxI >= 0 && maxW > 0 && !tie) {
+      log('selected bar = index', maxI, 'via visual-border (weight', maxW + ')');
+      return bars[maxI];
+    }
+
+    // 3) Give up — dump full diagnostics so we can pin the real hook.
+    log('FALLBACK FAILED — no selection signal on any bar. Per-bar diagnostics:',
+        bars.map(function (b, k) {
+          return {
+            index: k,
+            className: b.className,
+            ariaSelected: b.getAttribute && b.getAttribute('aria-selected'),
+            ariaChecked: b.getAttribute && b.getAttribute('aria-checked'),
+            dataSelected: b.getAttribute && b.getAttribute('data-selected'),
+            hasCheckedInput: !!(b.querySelector && b.querySelector('input:checked')),
+            borderWeight: borderWeight(b),
+            outerHTMLhead: (b.outerHTML || '').slice(0, 160)
+          };
+        }));
     return null;
   }
 
   function computeOneTimePrice() {
     var bar = getSelectedBar();
-    if (!bar) return '';
-    var priceEl = bar.querySelector(CONFIG.barPriceSelector);
-    if (!priceEl) { log('selected bar has no', CONFIG.barPriceSelector); return ''; }
+    if (!bar) { log('no selected bar → not updating (label keeps last value)'); return ''; }
+    // Read the DISCOUNTED price. .bar-price never matches .bar-full-price (different
+    // class token); we also explicitly reject the original-price a11y node as a guard.
+    var priceEl = bar.querySelector(CONFIG.barPriceSelector + ':not([data-a11y-label="system.original_price"])')
+               || bar.querySelector(CONFIG.barPriceSelector);
+    if (!priceEl) { log('selected bar (', bar.className, ') has no', CONFIG.barPriceSelector); return ''; }
+    if (priceEl.getAttribute && priceEl.getAttribute('data-a11y-label') === 'system.original_price') {
+      log('WARNING: matched node is original_price — check barPriceSelector', priceEl);
+    }
     var raw = clean(priceEl.textContent);
     var out = addOffset(raw, CONFIG.offset);
     if (!out) { log('could not parse price:', raw); return ''; }
-    log('selected', raw, '+', CONFIG.offset, '=', out);
+    log('bar-price', JSON.stringify(raw), '(a11y:', (priceEl.getAttribute && priceEl.getAttribute('data-a11y-label')) + ') +', CONFIG.offset, '=', JSON.stringify(out));
     return out;
   }
 
