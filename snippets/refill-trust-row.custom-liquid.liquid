@@ -33,27 +33,29 @@
 <style>
   .rt-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;                     /* always one line */
     align-items: center;
     justify-content: center;
-    gap: 10px 14px;
+    column-gap: 0.9em;
     background: transparent;
     font-family: inherit;
     color: {{ text_color }};
+    /* Scales down on mobile so both items fit one line; caps at 14px. */
+    font-size: clamp(10px, 3vw, 14px);
     margin: {{ margin_top }}px 0 {{ margin_bottom }}px;
   }
   .rt-item {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    font-size: 14px;
+    gap: 0.4em;
+    font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
     white-space: nowrap;
   }
   .rt-item svg {
-    width: 17px;
-    height: 17px;
+    width: 1.15em;                         /* icons scale with the text */
+    height: 1.15em;
     flex: 0 0 auto;
     display: block;
     stroke: currentColor;
@@ -64,13 +66,9 @@
   }
   .rt-divider {
     width: 1px;
-    align-self: stretch;
-    min-height: 16px;
+    align-self: center;
+    height: 1.1em;
     background: {{ divider_color }};
-  }
-  @media (max-width: 380px) {
-    .rt-item { font-size: 13px; }
-    .rt-row { gap: 8px 10px; }
   }
 </style>
 
