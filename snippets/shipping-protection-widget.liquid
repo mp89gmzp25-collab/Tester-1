@@ -1,61 +1,67 @@
 {%- comment -%}
   ============================================================================
-  DOVA SHIPPING PROTECTION — custom cart-drawer widget (replaces the app)
+  DOVA DELIVERY PROTECTION — custom cart-drawer widget
+  Leverages the existing tiered protection product (ex-Navidium).
   Shopify · Navidium theme
   ============================================================================
 
   ⚠️ COMPLIANCE: default-ON (pre-checked) paid add-ons are unlawful in the
-  UK/EU (pre-ticked boxes that add cost). You are on the GBP market. Set
-  DEFAULT_ON = false unless you have legal sign-off to pre-check it.
+  UK/EU. You are on the GBP market. Set DEFAULT_ON = false unless you have
+  legal sign-off to pre-check it.
 
-  PREREQUISITE
-  Create a Shopify product for the protection fee:
-    - Title: Dova Shipping Protection
-    - Handle: dova-shipping-protection   (set SP_HANDLE below to match)
-    - Price: your fee (e.g. 2.99)
-    - Uncheck "This is a physical product" (no shipping/weight).
-    - Keep it Active and available to the Online Store sales channel.
-  The widget resolves the variant + price from that handle automatically.
+  USES YOUR EXISTING PRODUCT
+  SP_HANDLE below points at "Dova Delivery Protection". Its many variants are
+  price tiers (0.75, 1.5, 2.25, …). The widget reads ALL variants, then picks
+  the tier for the current cart and adds/swaps it via the AJAX cart API —
+  mimicking what the app did.
+
+  >>> SET YOUR TIER RULE <<<
+  I don't have the app's old bracket table, so tiering defaults to
+  RATE % of the cart subtotal, clamped to the product's min/max variant and
+  snapped to the nearest available variant. Set RATE (and MIN/MAX if wanted)
+  to match your old pricing. Send me the exact brackets and I'll hard-map them.
+
+  CONFIRM THE HANDLE
+  SP_HANDLE must equal the product's URL handle (Product page → bottom → "Edit
+  website SEO" → handle). If it's not 'dova-delivery-protection', change it.
 
   WHERE TO PASTE
-  Best: theme.liquid, just before </body>  →  {% render 'shipping-protection-widget' %}
-  (Save this file as snippets/shipping-protection-widget.liquid first.)
-  It self-mounts into the cart drawer and re-mounts whenever the drawer
-  re-renders, so it works globally without editing the drawer markup.
-
-  CART-DRAWER LIVE REFRESH
-  Adding/removing updates the cart via the AJAX API and fires the common
-  refresh events. If your theme's drawer total doesn't update instantly,
-  send me the theme's cart-drawer refresh event or section id and I'll wire
-  an exact re-render. (Toggle state itself always stays correct.)
+  1) Edit code → Snippets → add snippet 'shipping-protection-widget' → paste.
+  2) layout/theme.liquid, before </body>:  {% render 'shipping-protection-widget' %}
+  It self-mounts into the cart drawer and re-mounts on re-render.
   ============================================================================
 {%- endcomment -%}
 
 {%- liquid
-  assign sp_handle = 'dova-shipping-protection'
+  assign sp_handle = 'dova-delivery-protection'
   assign sp_product = all_products[sp_handle]
-  assign sp_variant = sp_product.variants.first
 -%}
 
-{%- if sp_variant -%}
+{%- if sp_product and sp_product.variants.size > 0 -%}
 <script>
 (function () {
   'use strict';
 
+  var VARIANTS = [
+    {%- for v in sp_product.variants -%}
+      { id: {{ v.id }}, price: {{ v.price }}, text: {{ v.price | money | json }} }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ].filter(function (v) { return v.price > 0; }).sort(function (a, b) { return a.price - b.price; });
+
   var CONFIG = {
-    VARIANT_ID: {{ sp_variant.id }},
-    PRICE_CENTS: {{ sp_variant.price }},                 // theme/market money, in cents
-    PRICE_TEXT: {{ sp_variant.price | money | json }},   // localized, market-aware
-    DEFAULT_ON: true,          // ⚠️ set false for UK/EU compliance (see header)
-    SHOW_PRICE: true,          // recommended: show the fee for transparency
+    DEFAULT_ON: true,          // ⚠️ set false for UK/EU compliance
+    SHOW_PRICE: true,
 
-    TITLE: 'Dova Shipping Protection',
+    // Tier rule — tune to match your old app config.
+    RATE: 0.05,                // fee = 5% of cart subtotal…
+    MIN_CENTS: VARIANTS.length ? VARIANTS[0].price : 0,                 // …clamped to cheapest variant…
+    MAX_CENTS: VARIANTS.length ? VARIANTS[VARIANTS.length - 1].price : 0, // …and priciest variant.
+
+    TITLE: 'Dova Delivery Protection',
     SUBTITLE: 'from Damage, Loss & Theft',
-    DESC: 'By deselecting Shipping Protection, we will not be liable for lost or stolen packages.',
-
+    DESC: 'By deselecting Delivery Protection, we will not be liable for lost or stolen packages.',
     ON_COLOR: '#111827',
-    // Insert the widget before the first element matching this (checkout btn).
-    // The script falls back through a few common cart-drawer hooks.
+
     mountBeforeSelectors: [
       'cart-drawer [name="checkout"]',
       '.drawer__footer', '.cart-drawer__footer', '.cart__footer',
@@ -65,6 +71,11 @@
     debug: false,
     debounceMs: 120
   };
+
+  if (!VARIANTS.length) return;
+
+  var VARIANT_IDS = {};
+  VARIANTS.forEach(function (v) { VARIANT_IDS[v.id] = v; });
 
   var ROOT = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
   function api(p) { return ROOT.replace(/\/$/, '') + p; }
@@ -76,31 +87,45 @@
 
   function getCart() { return fetch(api('/cart.js'), { headers: { 'Accept': 'application/json' } }).then(function (r) { return r.json(); }); }
 
-  function findProtection(cart) {
-    for (var i = 0; i < cart.items.length; i++) if (cart.items[i].variant_id === CONFIG.VARIANT_ID) return cart.items[i];
+  function protectionLine(cart) {
+    for (var i = 0; i < cart.items.length; i++) if (VARIANT_IDS[cart.items[i].variant_id]) return cart.items[i];
     return null;
   }
-  function nonProtCount(cart) {
+  // Cart subtotal EXCLUDING any protection line, in cents (presentment currency).
+  function othersSubtotal(cart) {
+    var sum = 0;
+    for (var i = 0; i < cart.items.length; i++) if (!VARIANT_IDS[cart.items[i].variant_id]) sum += cart.items[i].final_line_price;
+    return sum;
+  }
+  function othersCount(cart) {
     var n = 0;
-    for (var i = 0; i < cart.items.length; i++) if (cart.items[i].variant_id !== CONFIG.VARIANT_ID) n += cart.items[i].quantity;
+    for (var i = 0; i < cart.items.length; i++) if (!VARIANT_IDS[cart.items[i].variant_id]) n += cart.items[i].quantity;
     return n;
   }
 
-  function addProtection() {
-    return fetch(api('/cart/add.js'), {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ items: [{ id: CONFIG.VARIANT_ID, quantity: 1, properties: { _protection: 'true' } }] })
-    });
-  }
-  function removeProtection(cart) {
-    var line = findProtection(cart);
-    if (!line) return Promise.resolve();
-    return fetch(api('/cart/change.js'), {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ id: line.key, quantity: 0 })
-    });
+  // Pick the variant whose price is nearest the desired fee for this cart.
+  function pickVariant(subtotalCents) {
+    var target = Math.max(CONFIG.MIN_CENTS, Math.min(CONFIG.MAX_CENTS, Math.round(subtotalCents * CONFIG.RATE)));
+    var best = VARIANTS[0], bestD = Infinity;
+    for (var i = 0; i < VARIANTS.length; i++) {
+      var d = Math.abs(VARIANTS[i].price - target);
+      if (d < bestD) { bestD = d; best = VARIANTS[i]; }
+    }
+    return best;
   }
 
+  function addVariant(id) {
+    return fetch(api('/cart/add.js'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items: [{ id: id, quantity: 1, properties: { _protection: 'true' } }] })
+    });
+  }
+  function removeLine(key) {
+    return fetch(api('/cart/change.js'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: 0 })
+    });
+  }
   function announceRefresh() {
     ['cart:refresh', 'cart:updated', 'cart:build', 'ajaxCart:updated'].forEach(function (ev) {
       try { document.dispatchEvent(new CustomEvent(ev, { bubbles: true })); } catch (e) {}
@@ -125,14 +150,13 @@
       '.sp-switch input:checked ~ .sp-track{background:' + CONFIG.ON_COLOR + ';}' +
       '.sp-switch input:checked ~ .sp-track::after{transform:translateX(18px);}' +
       '.sp-switch input:focus-visible ~ .sp-track{outline:2px solid #111827;outline-offset:2px;}' +
-      '.sp-switch input:disabled{cursor:default;}' +
       '.sp-widget[data-busy="1"]{opacity:.6;pointer-events:none;}';
     var s = document.createElement('style'); s.id = 'sp-styles'; s.textContent = css;
     document.head.appendChild(s);
   }
 
-  function buildWidget(checked) {
-    var priceHtml = CONFIG.SHOW_PRICE ? ' · ' + CONFIG.PRICE_TEXT : '';
+  function buildWidget(checked, priceText) {
+    var priceHtml = CONFIG.SHOW_PRICE && priceText ? ' · ' + priceText : '';
     var el = document.createElement('div');
     el.className = 'sp-widget';
     el.setAttribute('data-sp-widget', '');
@@ -142,12 +166,11 @@
       '</span>' +
       '<div class="sp-body">' +
         '<p class="sp-title">' + CONFIG.TITLE + '</p>' +
-        '<p class="sp-sub">' + CONFIG.SUBTITLE + priceHtml + '</p>' +
+        '<p class="sp-sub" data-sp-sub>' + CONFIG.SUBTITLE + priceHtml + '</p>' +
         '<p class="sp-desc">' + CONFIG.DESC + '</p>' +
       '</div>' +
       '<label class="sp-switch">' +
-        '<input type="checkbox" role="switch"' + (checked ? ' checked' : '') +
-          ' aria-label="' + CONFIG.TITLE + ' (' + CONFIG.PRICE_TEXT + ')">' +
+        '<input type="checkbox" role="switch"' + (checked ? ' checked' : '') + ' aria-label="' + CONFIG.TITLE + '">' +
         '<span class="sp-track"></span>' +
       '</label>';
     el.querySelector('input').addEventListener('change', onToggle);
@@ -161,7 +184,6 @@
     }
     return null;
   }
-
   function setBusy(state) {
     busy = state;
     var w = document.querySelector('[data-sp-widget]');
@@ -173,42 +195,56 @@
     var want = e.target.checked;
     setBusy(true);
     getCart().then(function (cart) {
-      if (want) { setOptOut(false); return addProtection(); }
-      setOptOut(true); return removeProtection(cart);
+      if (want) { setOptOut(false); return addVariant(pickVariant(othersSubtotal(cart)).id); }
+      setOptOut(true);
+      var line = protectionLine(cart);
+      return line ? removeLine(line.key) : null;
     }).then(function () { announceRefresh(); return sync(true); })
       .catch(function (err) { log('toggle error', err); })
       .then(function () { setBusy(false); });
   }
 
-  // Render/refresh the widget to match cart state; optionally after a mutation.
   function sync(afterMutation) {
     return getCart().then(function (cart) {
-      var present = !!findProtection(cart);
-      var others = nonProtCount(cart);
-
-      // Empty cart (no real products): remove protection + hide widget.
+      var line = protectionLine(cart);
+      var others = othersCount(cart);
       var existing = document.querySelector('[data-sp-widget]');
+
+      // No real products → strip protection + hide.
       if (others === 0) {
-        if (present && !busy) { setBusy(true); removeProtection(cart).then(function () { announceRefresh(); setBusy(false); }); }
+        if (line && !busy) { setBusy(true); removeLine(line.key).then(function () { announceRefresh(); setBusy(false); }); }
         if (existing) existing.remove();
         return;
       }
 
-      // Auto-check on first sight (unless opted out) — the compliance-sensitive bit.
-      if (!afterMutation && CONFIG.DEFAULT_ON && !present && !optedOut() && !busy) {
+      var want = pickVariant(othersSubtotal(cart));
+
+      // Tier drift: protection present but wrong variant → swap to correct tier.
+      if (line && line.variant_id !== want.id && !busy) {
         setBusy(true);
-        return addProtection().then(function () { announceRefresh(); setBusy(false); return sync(true); });
+        return removeLine(line.key).then(function () { return addVariant(want.id); })
+          .then(function () { announceRefresh(); setBusy(false); return sync(true); });
       }
 
-      // Mount or update the widget.
+      // Auto-check on first sight (compliance-sensitive).
+      if (!afterMutation && CONFIG.DEFAULT_ON && !line && !optedOut() && !busy) {
+        setBusy(true);
+        return addVariant(want.id).then(function () { announceRefresh(); setBusy(false); return sync(true); });
+      }
+
+      var present = !!line;
+      var priceText = present && VARIANT_IDS[line.variant_id] ? VARIANT_IDS[line.variant_id].text : want.text;
+
       var mount = findMount();
       if (!existing) {
-        if (!mount) { log('no mount point found yet'); return; }
+        if (!mount) { log('no mount point yet'); return; }
         ensureStyles();
-        mount.parentNode.insertBefore(buildWidget(present), mount);
+        mount.parentNode.insertBefore(buildWidget(present, priceText), mount);
       } else {
         var inp = existing.querySelector('input');
         if (inp && inp.checked !== present) inp.checked = present;
+        var sub = existing.querySelector('[data-sp-sub]');
+        if (sub) sub.textContent = CONFIG.SUBTITLE + (CONFIG.SHOW_PRICE && priceText ? ' · ' + priceText : '');
       }
     }).catch(function (err) { log('sync error', err); });
   }
@@ -219,11 +255,10 @@
   schedule();
   document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', schedule);
-  // Re-mount when the drawer opens/re-renders; re-sync after theme cart updates.
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
   ['cart:refresh', 'cart:updated', 'cart:build', 'ajaxCart:updated'].forEach(function (ev) { document.addEventListener(ev, schedule); });
 })();
 </script>
 {%- else -%}
-  {%- comment -%} Shipping Protection product not found — create it and set SP_HANDLE. {%- endcomment -%}
+  {%- comment -%} 'dova-delivery-protection' not found — confirm SP_HANDLE. {%- endcomment -%}
 {%- endif -%}
