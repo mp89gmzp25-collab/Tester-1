@@ -1,0 +1,107 @@
+{%- comment -%}
+  ============================================================================
+  REFILL TRUST ROW  —  Custom Liquid (strict, no section/schema)
+  Dova Probiotics Oral Spray PDP · Shopify · Navidium theme
+  ============================================================================
+
+  RENDERS (centered, thin-line icons, inherits theme font):
+    ↻ Refills Ship Every 30 Days   |   ⏱ Stop or Cancel Anytime
+
+  WHERE TO PLACE IT
+  Theme editor → Product template → Add a "Custom Liquid" block DIRECTLY
+  BELOW the Add to Cart button → paste this whole file → Save.
+
+  TO EDIT COPY / ICONS / COLORS
+  Everything is in the EDIT HERE block below. Set show_icons = false to drop
+  the glyphs; set either text to '' to hide that item (the divider auto-hides
+  when only one item is shown).
+  ============================================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign left_text     = 'Refills Ship Every 30 Days'
+  assign right_text    = 'Stop or Cancel Anytime'
+  assign show_icons    = true
+
+  assign text_color    = '#111827'
+  assign divider_color = '#D1D5DB'
+
+  assign margin_top    = 12
+  assign margin_bottom = 12
+-%}
+
+<style>
+  .rt-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 14px;
+    background: transparent;
+    font-family: inherit;
+    color: {{ text_color }};
+    margin: {{ margin_top }}px 0 {{ margin_bottom }}px;
+  }
+  .rt-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .rt-item svg {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .rt-divider {
+    width: 1px;
+    align-self: stretch;
+    min-height: 16px;
+    background: {{ divider_color }};
+  }
+  @media (max-width: 380px) {
+    .rt-item { font-size: 13px; }
+    .rt-row { gap: 8px 10px; }
+  }
+</style>
+
+<div class="rt-row" role="group" aria-label="{{ left_text | strip_html | escape }}{% if left_text != blank and right_text != blank %}, {% endif %}{{ right_text | strip_html | escape }}">
+  {%- if left_text != blank -%}
+    <span class="rt-item">
+      {%- if show_icons -%}
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 11.5a8 8 0 0 0-13.7-5.2L3 9"/>
+          <path d="M3 4v5h5"/>
+          <path d="M4 12.5a8 8 0 0 0 13.7 5.2L21 15"/>
+          <path d="M21 20v-5h-5"/>
+        </svg>
+      {%- endif -%}
+      <span>{{ left_text }}</span>
+    </span>
+  {%- endif -%}
+
+  {%- if left_text != blank and right_text != blank -%}
+    <span class="rt-divider" aria-hidden="true"></span>
+  {%- endif -%}
+
+  {%- if right_text != blank -%}
+    <span class="rt-item">
+      {%- if show_icons -%}
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 7.5V12l3 2"/>
+        </svg>
+      {%- endif -%}
+      <span>{{ right_text }}</span>
+    </span>
+  {%- endif -%}
+</div>
