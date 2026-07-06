@@ -1,0 +1,229 @@
+{%- comment -%}
+  ============================================================================
+  DOVA SHIPPING PROTECTION — custom cart-drawer widget (replaces the app)
+  Shopify · Navidium theme
+  ============================================================================
+
+  ⚠️ COMPLIANCE: default-ON (pre-checked) paid add-ons are unlawful in the
+  UK/EU (pre-ticked boxes that add cost). You are on the GBP market. Set
+  DEFAULT_ON = false unless you have legal sign-off to pre-check it.
+
+  PREREQUISITE
+  Create a Shopify product for the protection fee:
+    - Title: Dova Shipping Protection
+    - Handle: dova-shipping-protection   (set SP_HANDLE below to match)
+    - Price: your fee (e.g. 2.99)
+    - Uncheck "This is a physical product" (no shipping/weight).
+    - Keep it Active and available to the Online Store sales channel.
+  The widget resolves the variant + price from that handle automatically.
+
+  WHERE TO PASTE
+  Best: theme.liquid, just before </body>  →  {% render 'shipping-protection-widget' %}
+  (Save this file as snippets/shipping-protection-widget.liquid first.)
+  It self-mounts into the cart drawer and re-mounts whenever the drawer
+  re-renders, so it works globally without editing the drawer markup.
+
+  CART-DRAWER LIVE REFRESH
+  Adding/removing updates the cart via the AJAX API and fires the common
+  refresh events. If your theme's drawer total doesn't update instantly,
+  send me the theme's cart-drawer refresh event or section id and I'll wire
+  an exact re-render. (Toggle state itself always stays correct.)
+  ============================================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign sp_handle = 'dova-shipping-protection'
+  assign sp_product = all_products[sp_handle]
+  assign sp_variant = sp_product.variants.first
+-%}
+
+{%- if sp_variant -%}
+<script>
+(function () {
+  'use strict';
+
+  var CONFIG = {
+    VARIANT_ID: {{ sp_variant.id }},
+    PRICE_CENTS: {{ sp_variant.price }},                 // theme/market money, in cents
+    PRICE_TEXT: {{ sp_variant.price | money | json }},   // localized, market-aware
+    DEFAULT_ON: true,          // ⚠️ set false for UK/EU compliance (see header)
+    SHOW_PRICE: true,          // recommended: show the fee for transparency
+
+    TITLE: 'Dova Shipping Protection',
+    SUBTITLE: 'from Damage, Loss & Theft',
+    DESC: 'By deselecting Shipping Protection, we will not be liable for lost or stolen packages.',
+
+    ON_COLOR: '#111827',
+    // Insert the widget before the first element matching this (checkout btn).
+    // The script falls back through a few common cart-drawer hooks.
+    mountBeforeSelectors: [
+      'cart-drawer [name="checkout"]',
+      '.drawer__footer', '.cart-drawer__footer', '.cart__footer',
+      '[name="checkout"]'
+    ],
+    optOutKey: 'dova_sp_optout',
+    debug: false,
+    debounceMs: 120
+  };
+
+  var ROOT = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+  function api(p) { return ROOT.replace(/\/$/, '') + p; }
+  function log() { if (CONFIG.debug && window.console) console.log.apply(console, ['[sp]'].concat([].slice.call(arguments))); }
+  function optedOut() { try { return sessionStorage.getItem(CONFIG.optOutKey) === '1'; } catch (e) { return false; } }
+  function setOptOut(v) { try { v ? sessionStorage.setItem(CONFIG.optOutKey, '1') : sessionStorage.removeItem(CONFIG.optOutKey); } catch (e) {} }
+
+  var busy = false;
+
+  function getCart() { return fetch(api('/cart.js'), { headers: { 'Accept': 'application/json' } }).then(function (r) { return r.json(); }); }
+
+  function findProtection(cart) {
+    for (var i = 0; i < cart.items.length; i++) if (cart.items[i].variant_id === CONFIG.VARIANT_ID) return cart.items[i];
+    return null;
+  }
+  function nonProtCount(cart) {
+    var n = 0;
+    for (var i = 0; i < cart.items.length; i++) if (cart.items[i].variant_id !== CONFIG.VARIANT_ID) n += cart.items[i].quantity;
+    return n;
+  }
+
+  function addProtection() {
+    return fetch(api('/cart/add.js'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items: [{ id: CONFIG.VARIANT_ID, quantity: 1, properties: { _protection: 'true' } }] })
+    });
+  }
+  function removeProtection(cart) {
+    var line = findProtection(cart);
+    if (!line) return Promise.resolve();
+    return fetch(api('/cart/change.js'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ id: line.key, quantity: 0 })
+    });
+  }
+
+  function announceRefresh() {
+    ['cart:refresh', 'cart:updated', 'cart:build', 'ajaxCart:updated'].forEach(function (ev) {
+      try { document.dispatchEvent(new CustomEvent(ev, { bubbles: true })); } catch (e) {}
+    });
+  }
+
+  // ---- UI -------------------------------------------------------------------
+  function ensureStyles() {
+    if (document.getElementById('sp-styles')) return;
+    var css =
+      '.sp-widget{display:flex;align-items:flex-start;gap:12px;font-family:inherit;padding:12px 0;}' +
+      '.sp-icon{flex:0 0 auto;width:38px;height:38px;color:' + CONFIG.ON_COLOR + ';}' +
+      '.sp-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}' +
+      '.sp-body{flex:1 1 auto;min-width:0;}' +
+      '.sp-title{font-weight:700;font-size:15px;color:#111827;margin:0;}' +
+      '.sp-sub{font-size:13px;color:#6B7280;margin:2px 0 0;}' +
+      '.sp-desc{font-size:12px;color:#9CA3AF;margin:6px 0 0;line-height:1.35;}' +
+      '.sp-switch{position:relative;width:44px;height:26px;flex:0 0 auto;display:inline-block;margin-top:2px;}' +
+      '.sp-switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}' +
+      '.sp-track{position:absolute;inset:0;background:#D1D5DB;border-radius:999px;transition:background .2s;pointer-events:none;}' +
+      '.sp-track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.25);}' +
+      '.sp-switch input:checked ~ .sp-track{background:' + CONFIG.ON_COLOR + ';}' +
+      '.sp-switch input:checked ~ .sp-track::after{transform:translateX(18px);}' +
+      '.sp-switch input:focus-visible ~ .sp-track{outline:2px solid #111827;outline-offset:2px;}' +
+      '.sp-switch input:disabled{cursor:default;}' +
+      '.sp-widget[data-busy="1"]{opacity:.6;pointer-events:none;}';
+    var s = document.createElement('style'); s.id = 'sp-styles'; s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  function buildWidget(checked) {
+    var priceHtml = CONFIG.SHOW_PRICE ? ' · ' + CONFIG.PRICE_TEXT : '';
+    var el = document.createElement('div');
+    el.className = 'sp-widget';
+    el.setAttribute('data-sp-widget', '');
+    el.innerHTML =
+      '<span class="sp-icon" aria-hidden="true">' +
+        '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-2.9 7.9-7 9-4.1-1.1-7-4.6-7-9V6l7-3z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg>' +
+      '</span>' +
+      '<div class="sp-body">' +
+        '<p class="sp-title">' + CONFIG.TITLE + '</p>' +
+        '<p class="sp-sub">' + CONFIG.SUBTITLE + priceHtml + '</p>' +
+        '<p class="sp-desc">' + CONFIG.DESC + '</p>' +
+      '</div>' +
+      '<label class="sp-switch">' +
+        '<input type="checkbox" role="switch"' + (checked ? ' checked' : '') +
+          ' aria-label="' + CONFIG.TITLE + ' (' + CONFIG.PRICE_TEXT + ')">' +
+        '<span class="sp-track"></span>' +
+      '</label>';
+    el.querySelector('input').addEventListener('change', onToggle);
+    return el;
+  }
+
+  function findMount() {
+    for (var i = 0; i < CONFIG.mountBeforeSelectors.length; i++) {
+      var t = document.querySelector(CONFIG.mountBeforeSelectors[i]);
+      if (t) return t;
+    }
+    return null;
+  }
+
+  function setBusy(state) {
+    busy = state;
+    var w = document.querySelector('[data-sp-widget]');
+    if (w) { w.setAttribute('data-busy', state ? '1' : '0'); var inp = w.querySelector('input'); if (inp) inp.disabled = state; }
+  }
+
+  function onToggle(e) {
+    if (busy) { e.target.checked = !e.target.checked; return; }
+    var want = e.target.checked;
+    setBusy(true);
+    getCart().then(function (cart) {
+      if (want) { setOptOut(false); return addProtection(); }
+      setOptOut(true); return removeProtection(cart);
+    }).then(function () { announceRefresh(); return sync(true); })
+      .catch(function (err) { log('toggle error', err); })
+      .then(function () { setBusy(false); });
+  }
+
+  // Render/refresh the widget to match cart state; optionally after a mutation.
+  function sync(afterMutation) {
+    return getCart().then(function (cart) {
+      var present = !!findProtection(cart);
+      var others = nonProtCount(cart);
+
+      // Empty cart (no real products): remove protection + hide widget.
+      var existing = document.querySelector('[data-sp-widget]');
+      if (others === 0) {
+        if (present && !busy) { setBusy(true); removeProtection(cart).then(function () { announceRefresh(); setBusy(false); }); }
+        if (existing) existing.remove();
+        return;
+      }
+
+      // Auto-check on first sight (unless opted out) — the compliance-sensitive bit.
+      if (!afterMutation && CONFIG.DEFAULT_ON && !present && !optedOut() && !busy) {
+        setBusy(true);
+        return addProtection().then(function () { announceRefresh(); setBusy(false); return sync(true); });
+      }
+
+      // Mount or update the widget.
+      var mount = findMount();
+      if (!existing) {
+        if (!mount) { log('no mount point found yet'); return; }
+        ensureStyles();
+        mount.parentNode.insertBefore(buildWidget(present), mount);
+      } else {
+        var inp = existing.querySelector('input');
+        if (inp && inp.checked !== present) inp.checked = present;
+      }
+    }).catch(function (err) { log('sync error', err); });
+  }
+
+  var timer = null;
+  function schedule() { if (timer) clearTimeout(timer); timer = setTimeout(function () { sync(false); }, CONFIG.debounceMs); }
+
+  schedule();
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule);
+  // Re-mount when the drawer opens/re-renders; re-sync after theme cart updates.
+  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  ['cart:refresh', 'cart:updated', 'cart:build', 'ajaxCart:updated'].forEach(function (ev) { document.addEventListener(ev, schedule); });
+})();
+</script>
+{%- else -%}
+  {%- comment -%} Shipping Protection product not found — create it and set SP_HANDLE. {%- endcomment -%}
+{%- endif -%}
