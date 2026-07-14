@@ -1,12 +1,11 @@
 {%- comment -%}
   ============================================================================
-  "X% SOLD" SCARCITY BAR — Custom Liquid (strict) — single-element gradient
+  "X% SOLD" SCARCITY BAR — Custom Liquid (strict) — SVG version (bulletproof)
   Dova · Shopify
   ============================================================================
-  The bar is ONE div: a left-to-right gradient that is fill_color up to the
-  percent, then track_color after. No nested fill element (page builders
-  sometimes strip those), so the red always paints. Edit the EDIT HERE block.
-  {p} in the label = the percent number.
+  The bar is drawn as an inline SVG. The red is a fill="" ATTRIBUTE on a
+  <rect>, not a CSS background — so page builders (GemPages) that strip CSS
+  backgrounds can't remove it. Edit the EDIT HERE block. {p} = percent number.
   ============================================================================
 {%- endcomment -%}
 
@@ -17,10 +16,6 @@
   assign fill_color  = '#C0463B'
   assign track_color = '#E7E7E7'
   assign label_color = '#C27A70'
-  assign card_bg     = '#FFFFFF'
-
-  assign show_card = true
-  assign show_glow = true
   assign bar_height = 14
 
   if percent > 100
@@ -29,31 +24,23 @@
   if percent < 0
     assign percent = 0
   endif
+  assign rx = bar_height | divided_by: 2
   assign label = label | replace: '{p}', percent
-
-  assign card_css = ''
-  if show_card
-    assign card_css = 'background:' | append: card_bg | append: ';border-radius:16px;box-shadow:0 4px 18px rgba(16,24,40,0.06);padding:22px 24px;'
-  endif
-
-  assign glow_css = ''
-  if show_glow
-    assign glow_css = 'box-shadow:0 0 10px 1px ' | append: fill_color | append: '55;'
-  endif
-
-  assign bar_bg = 'linear-gradient(to right,' | append: fill_color | append: ' 0%,' | append: fill_color | append: ' ' | append: percent | append: '%,' | append: track_color | append: ' ' | append: percent | append: '%,' | append: track_color | append: ' 100%)'
 -%}
 
-<div style="font-family:inherit;margin:12px 0;{{ card_css }}">
-  <div
+<div style="display:flex;align-items:center;gap:16px;margin:12px 0;font-family:inherit;">
+  <svg
+    width="100%"
+    height="{{ bar_height }}"
+    style="display:block;flex:1 1 auto;"
     role="progressbar"
     aria-valuenow="{{ percent }}"
     aria-valuemin="0"
     aria-valuemax="100"
     aria-label="{{ label | strip_html | escape }}"
-    style="display:flex;align-items:center;gap:16px;"
   >
-    <div style="flex:1 1 auto;height:{{ bar_height }}px;border-radius:999px;background:{{ bar_bg }};{{ glow_css }}"></div>
-    <span style="flex:0 0 auto;color:{{ label_color }};font-size:clamp(15px,4vw,18px);font-weight:700;line-height:1;white-space:nowrap;">{{ label }}</span>
-  </div>
+    <rect x="0" y="0" width="100%" height="{{ bar_height }}" rx="{{ rx }}" fill="{{ track_color }}"></rect>
+    <rect x="0" y="0" width="{{ percent }}%" height="{{ bar_height }}" rx="{{ rx }}" fill="{{ fill_color }}"></rect>
+  </svg>
+  <span style="flex:0 0 auto;color:{{ label_color }};font-size:clamp(15px,4vw,18px);font-weight:700;line-height:1;white-space:nowrap;">{{ label }}</span>
 </div>
