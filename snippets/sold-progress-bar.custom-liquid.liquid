@@ -1,19 +1,11 @@
 {%- comment -%}
   ============================================================================
-  "X% SOLD" SCARCITY BAR — Custom Liquid (strict, no section/schema)
+  "X% SOLD" SCARCITY BAR — Custom Liquid (strict) — inline-styled (robust)
   Dova · Shopify
   ============================================================================
-
-  RENDERS: a rounded card with a glowing terracotta progress fill and a
-  muted-red "93% Sold" label on the right.
-
-  WHERE TO PASTE
-  Theme editor → add a "Custom Liquid" section/block where you want it →
-  paste this whole file → Save.
-
-  TO EDIT
-  Everything is in the EDIT HERE block below. {p} in the label is replaced
-  by the percent number, so you only set the number once.
+  All critical styles are INLINE on the elements so the theme's CSS can't
+  override or strip them (fixes the "red fill not showing" issue).
+  Edit values in the EDIT HERE block. {p} in the label = the percent number.
   ============================================================================
 {%- endcomment -%}
 
@@ -37,66 +29,30 @@
     assign percent = 0
   endif
   assign label = label | replace: '{p}', percent
+
+  assign card_css = ''
+  if show_card
+    assign card_css = 'background:' | append: card_bg | append: ';border-radius:16px;box-shadow:0 4px 18px rgba(16,24,40,0.06);padding:22px 24px;'
+  endif
+
+  assign glow_css = ''
+  if show_glow
+    assign glow_css = 'box-shadow:0 0 10px 1px ' | append: fill_color | append: '80;'
+  endif
 -%}
 
-<style>
-  .sold-bar-wrap {
-    font-family: inherit;
-    margin: 12px 0;
-    {% if show_card %}
-      background: {{ card_bg }};
-      border-radius: 16px;
-      box-shadow: 0 4px 18px rgba(16, 24, 40, 0.06);
-      padding: 22px 24px;
-    {% endif %}
-  }
-  .sold-bar {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  .sold-bar__track {
-    flex: 1 1 auto;
-    height: {{ bar_height }}px;
-    background: {{ track_color }};
-    border-radius: 999px;
-    overflow: visible;
-  }
-  .sold-bar__fill {
-    height: 100%;
-    width: {{ percent }}%;
-    background: {{ fill_color }};
-    border-radius: 999px;
-    {% if show_glow %}box-shadow: 0 0 10px 1px {{ fill_color }}80;{% endif %}
-    transition: width .4s ease;
-  }
-  .sold-bar__label {
-    flex: 0 0 auto;
-    color: {{ label_color }};
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
-  }
-  @media (max-width: 480px) {
-    .sold-bar { gap: 12px; }
-    .sold-bar__label { font-size: 16px; }
-    .sold-bar-wrap { padding: 18px; }
-  }
-</style>
-
-<div class="sold-bar-wrap">
+<div style="font-family:inherit;margin:12px 0;{{ card_css }}">
   <div
-    class="sold-bar"
     role="progressbar"
     aria-valuenow="{{ percent }}"
     aria-valuemin="0"
     aria-valuemax="100"
     aria-label="{{ label | strip_html | escape }}"
+    style="display:flex;align-items:center;gap:16px;"
   >
-    <div class="sold-bar__track">
-      <div class="sold-bar__fill"></div>
+    <div style="flex:1 1 auto;height:{{ bar_height }}px;background:{{ track_color }};border-radius:999px;">
+      <div style="height:100%;width:{{ percent }}%;background:{{ fill_color }};border-radius:999px;{{ glow_css }}transition:width .4s ease;"></div>
     </div>
-    <span class="sold-bar__label">{{ label }}</span>
+    <span style="flex:0 0 auto;color:{{ label_color }};font-size:clamp(15px,4vw,18px);font-weight:700;line-height:1;white-space:nowrap;">{{ label }}</span>
   </div>
 </div>
