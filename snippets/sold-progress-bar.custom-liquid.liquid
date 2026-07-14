@@ -1,11 +1,12 @@
 {%- comment -%}
   ============================================================================
-  "X% SOLD" SCARCITY BAR — Custom Liquid (strict) — inline-styled (robust)
+  "X% SOLD" SCARCITY BAR — Custom Liquid (strict) — single-element gradient
   Dova · Shopify
   ============================================================================
-  All critical styles are INLINE on the elements so the theme's CSS can't
-  override or strip them (fixes the "red fill not showing" issue).
-  Edit values in the EDIT HERE block. {p} in the label = the percent number.
+  The bar is ONE div: a left-to-right gradient that is fill_color up to the
+  percent, then track_color after. No nested fill element (page builders
+  sometimes strip those), so the red always paints. Edit the EDIT HERE block.
+  {p} in the label = the percent number.
   ============================================================================
 {%- endcomment -%}
 
@@ -37,8 +38,10 @@
 
   assign glow_css = ''
   if show_glow
-    assign glow_css = 'box-shadow:0 0 10px 1px ' | append: fill_color | append: '80;'
+    assign glow_css = 'box-shadow:0 0 10px 1px ' | append: fill_color | append: '55;'
   endif
+
+  assign bar_bg = 'linear-gradient(to right,' | append: fill_color | append: ' 0%,' | append: fill_color | append: ' ' | append: percent | append: '%,' | append: track_color | append: ' ' | append: percent | append: '%,' | append: track_color | append: ' 100%)'
 -%}
 
 <div style="font-family:inherit;margin:12px 0;{{ card_css }}">
@@ -50,9 +53,7 @@
     aria-label="{{ label | strip_html | escape }}"
     style="display:flex;align-items:center;gap:16px;"
   >
-    <div style="flex:1 1 auto;height:{{ bar_height }}px;background:{{ track_color }};border-radius:999px;">
-      <div style="height:100%;width:{{ percent }}%;background:{{ fill_color }};border-radius:999px;{{ glow_css }}transition:width .4s ease;"></div>
-    </div>
+    <div style="flex:1 1 auto;height:{{ bar_height }}px;border-radius:999px;background:{{ bar_bg }};{{ glow_css }}"></div>
     <span style="flex:0 0 auto;color:{{ label_color }};font-size:clamp(15px,4vw,18px);font-weight:700;line-height:1;white-space:nowrap;">{{ label }}</span>
   </div>
 </div>
