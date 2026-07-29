@@ -1,0 +1,33 @@
+{%- comment -%}
+  ============================================================================
+  PRODUCT TITLE + SUBTEXT — Custom Liquid (strict) — inline-styled (robust)
+  Dova · Shopify
+  ============================================================================
+  Line 1 renders at the theme's title size/weight/font; line 2 renders as
+  smaller, muted subtext (proportional, reads as a subtitle — not a title).
+  All styles are inline so a page builder can't strip them.
+
+  PLACEMENT
+  Add a "Custom Liquid" block where the title should sit, then HIDE the
+  theme's default "Title" block (eye icon) so there's only one heading.
+
+  EDIT the two lines + colors/sizes in the EDIT HERE block below.
+  ============================================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign title_text   = 'Dova Waterproof bronzing setting spray'
+  assign subtext_text = '16-hour wear · transfer-proof · instant bronze in 5 seconds'
+
+  assign title_color   = '#111111'
+  assign subtext_color = '#6B7280'
+
+  assign title_size    = 'clamp(28px, 6vw, 44px)'
+  assign subtext_size  = 'clamp(13px, 3.4vw, 16px)'
+  assign title_weight  = 800
+-%}
+
+<div style="margin:0 0 10px;">
+  <h1 style="font-family:var(--font-heading-family, inherit);font-weight:{{ title_weight }};font-size:{{ title_size }};line-height:1.05;letter-spacing:-0.01em;color:{{ title_color }};margin:0;">{{ title_text }}</h1>
+  <p style="font-family:inherit;font-weight:400;font-size:{{ subtext_size }};line-height:1.35;color:{{ subtext_color }};margin:8px 0 0;">{{ subtext_text }}</p>
+</div>
