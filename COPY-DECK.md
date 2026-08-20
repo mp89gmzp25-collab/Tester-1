@@ -10,16 +10,16 @@
 
 ## 5.1 — Trust bar
 
-Six items, static, no marquee. Each is its own schema `text` setting.
+Four items, static, no marquee. Each is its own schema `text` setting.
+The hero already carries the FU number and the certification row (third-party tested, cGMP, non-GMO,
+no proprietary blends), so the trust bar does **not** repeat them. It carries only:
 
-1. `[PRODUCT FU — e.g. 10,000] FU per serving`  ← mono
-2. `Third-party tested`
-3. `cGMP facility`
-4. `Non-GMO`
-5. `No proprietary blends`
-6. `[GUARANTEE — e.g. 60-day money-back]`
+1. `Scan the batch, see the test`
+2. `180-day money-back, keep the bottle`
+3. `Tracked shipping`
+4. `Ships same day`
 
-If a scannable batch COA/QR exists, item 1's neighbour becomes `Scan the batch → see the test`. (Depends on THIRD-PARTY TEST STATUS input.)
+No free-shipping claim. Shipping cost is a separate schema field (`shipping_cost`), empty until confirmed.
 
 ---
 
@@ -191,17 +191,17 @@ Each Q is a schema block (question `text` + answer `richtext`).
 7. **Where is it made and where does the strain come from?** — `[MADE IN — country]`, in a cGMP facility. The strain comes from `[STRAIN ORIGIN — TODO]`. `<!-- TODO: confirm both. Handle with transparency, not a flag. -->`
 8. **Is it third-party tested? Can I see the certificate?** — `[yes/no + how — TEST STATUS INPUT]`. `<!-- TODO: if COA/QR exists, link it here and reference it in the trust strip. -->`
 9. **I have a soy allergy — can I take this?** — `[TODO: real answer depends on strain/processing.]`
-10. **What if it doesn't work for me?** — `[GUARANTEE TERMS]`. You keep the bottle. `<!-- TODO from GUARANTEE input. -->`
+10. **What if it doesn't work for me?** — 180 days, money back, and you keep the bottle. Email us — you don't ship it back.
 11. **Can I give this to my parent?** — A lot of people buy it for a parent or in-law. If they're on medication or have a condition, walk through "Who should skip this" with them, or with their doctor, first.
 
 ---
 
 ## 5.12 — Guarantee + final CTA
 
-**Heading:** `[GUARANTEE — e.g. Try it for 60 days. Keep the bottle either way.]`
+**Heading:** Try it for 180 days. Keep the bottle either way.
 
 **Body:**
-`[GUARANTEE TERMS, plain: length, what happens, cancel-anytime if subscription. From input.]` If it's not doing anything for you, you email us and you get your money back. You don't ship the bottle back. That's the deal.
+`[GUARANTEE TERMS, plain: length, what happens, cancel-anytime if subscription. From input.]` If it's not doing anything for you in 180 days, you email us and you get your money back. You don't ship the bottle back. That's the deal.
 
 **CTA button (scrolls to Kaching, never adds to cart):** `See the bundles`
 

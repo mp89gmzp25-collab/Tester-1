@@ -44,8 +44,8 @@
 | Bromelain | 50 mg (500 GDU/g) | §5.7 #6 | Label |
 | Null-study dose | ~2,000 FU | §5.4 | The actual cited trial's method |
 | Competitor tiers on dose scale | 2,000 / 4,000 / 5,000 FU | §5.4 visual, §5.5 | Normalise per **serving**, not per capsule |
-| Guarantee | 60 days, keep the bottle | §5.12, FAQ 10 | Fulfilment will honour |
-| Shipping | Free, tracked, 3–5 days US | §5.12 | Ops |
+| Guarantee | 180 days, keep the bottle | §5.12, FAQ 10 | Fulfilment will honour |
+| Shipping | Tracked, 3–5 days US (no free-shipping claim; cost TBD) | §5.12 | Ops |
 | Cost per day | $1.33 / $1.17 / $1.00 | ATF risk-reversal, §5.12 | Kaching tier prices |
 | Rating / review count | placeholder | ATF, §5.10 | Real review data |
 

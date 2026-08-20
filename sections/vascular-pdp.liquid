@@ -27,6 +27,7 @@
 {%- style -%}
   #shopify-section-{{ section.id }} .vp-root {
     --vp-paper: {{ s.color_paper }};
+    --vp-paper-alt: {{ s.color_paper_alt }};
     --vp-ink: {{ s.color_ink }};
     --vp-red: {{ s.color_accent }};
     --vp-grey-1: {{ s.color_grey_1 }};
@@ -42,6 +43,7 @@
   #shopify-section-{{ section.id }} .vp-root * { box-sizing: border-box; }
 
   #shopify-section-{{ section.id }} .vp-band { padding: 40px 20px; }
+  #shopify-section-{{ section.id }} .vp-band--alt { background: var(--vp-paper-alt); }
   #shopify-section-{{ section.id }} .vp-inner { max-width: var(--vp-maxw); margin: 0 auto; }
   #shopify-section-{{ section.id }} .vp-inner--wide { max-width: var(--vp-wide); }
 
@@ -212,12 +214,10 @@
   {%- if s.show_trustbar -%}
     <div class="vp-trust">
       <ul>
-        {%- if s.trust_1 != blank -%}<li><span class="vp-mono">{{ s.trust_1 }}</span></li>{%- endif -%}
+        {%- if s.trust_1 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_1 }}</li>{%- endif -%}
         {%- if s.trust_2 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_2 }}</li>{%- endif -%}
         {%- if s.trust_3 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_3 }}</li>{%- endif -%}
         {%- if s.trust_4 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_4 }}</li>{%- endif -%}
-        {%- if s.trust_5 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_5 }}</li>{%- endif -%}
-        {%- if s.trust_6 != blank -%}<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{ s.trust_6 }}</li>{%- endif -%}
       </ul>
     </div>
   {%- endif -%}
@@ -262,7 +262,7 @@
 
   {%- comment -%} 5.4 DOSE GATE {%- endcomment -%}
   {%- if s.show_dosegate -%}
-    <section class="vp-band" id="vp-dose">
+    <section class="vp-band vp-band--alt" id="vp-dose">
       <div class="vp-inner">
         {%- if s.dose_heading != blank -%}<h2 class="vp-h">{{ s.dose_heading }}</h2>{%- endif -%}
         <div class="vp-copy">{{ s.dose_body }}</div>
@@ -337,7 +337,7 @@
 
   {%- comment -%} 5.7 INGREDIENT GRID {%- endcomment -%}
   {%- if s.show_ingredients -%}
-    <section class="vp-band">
+    <section class="vp-band vp-band--alt">
       <div class="vp-inner vp-inner--wide">
         {%- if s.ing_heading != blank -%}<h2 class="vp-h">{{ s.ing_heading }}</h2>{%- endif -%}
         {%- if s.ing_intro != blank -%}<div class="vp-copy" style="margin-bottom:14px">{{ s.ing_intro }}</div>{%- endif -%}
@@ -416,7 +416,7 @@
 
   {%- comment -%} 5.11 FAQ {%- endcomment -%}
   {%- if s.show_faq -%}
-    <section class="vp-band">
+    <section class="vp-band vp-band--alt">
       <div class="vp-inner">
         {%- if s.faq_heading != blank -%}<h2 class="vp-h">{{ s.faq_heading }}</h2>{%- endif -%}
         <div class="vp-faq">
@@ -443,6 +443,8 @@
           <a href="#offer-block" class="vp-cta" data-bundle-index="{{ s.cta_bundle_index }}">{{ s.cta_label | default: 'See the bundles' }}</a>
         </div>
         {%- if s.gtee_fineprint != blank -%}<p class="vp-fineprint">{{ s.gtee_fineprint }}</p>{%- endif -%}
+        <!-- TODO: shipping cost -->
+        {%- if s.shipping_cost != blank -%}<p class="vp-fineprint" style="margin-top:6px">Shipping: {{ s.shipping_cost }}</p>{%- endif -%}
         {%- if s.contact_line != blank -%}<p class="vp-fineprint" style="margin-top:10px"><span class="vp-mono">{{ s.contact_line }}</span></p>{%- endif -%}
         {%- if s.disclaimer != blank -%}<div class="vp-disclaimer vp-inner" style="margin-top:26px">{{ s.disclaimer }}</div>{%- endif -%}
       </div>
@@ -502,19 +504,18 @@
   "settings": [
     { "type": "header", "content": "Palette (verified-paperwork system)" },
     { "type": "color", "id": "color_paper", "label": "Paper background", "default": "#F2ECDE" },
+    { "type": "color", "id": "color_paper_alt", "label": "Paper background — alt (brighter, 3 bands)", "default": "#FCFAF5" },
     { "type": "color", "id": "color_ink", "label": "Ink (near-black)", "default": "#17140F" },
     { "type": "color", "id": "color_accent", "label": "Accent — verifiable numbers + CTA only", "default": "#C0362C" },
     { "type": "color", "id": "color_grey_1", "label": "Structural grey (text)", "default": "#726B5E" },
-    { "type": "color", "id": "color_grey_2", "label": "Structural grey (lines)", "default": "#DBD3C4" },
+    { "type": "color", "id": "color_grey_2", "label": "Structural grey (lines)", "default": "#CEC4AF" },
 
     { "type": "header", "content": "5.1 Trust bar" },
     { "type": "checkbox", "id": "show_trustbar", "label": "Show trust bar", "default": true },
-    { "type": "text", "id": "trust_1", "label": "Item 1 (mono — the dose)", "default": "10,000 FU per serving" },
-    { "type": "text", "id": "trust_2", "label": "Item 2", "default": "Third-party tested, every lot" },
-    { "type": "text", "id": "trust_3", "label": "Item 3", "default": "Scan the batch, see the test" },
-    { "type": "text", "id": "trust_4", "label": "Item 4", "default": "cGMP facility" },
-    { "type": "text", "id": "trust_5", "label": "Item 5", "default": "No proprietary blends" },
-    { "type": "text", "id": "trust_6", "label": "Item 6", "default": "60-day money-back" },
+    { "type": "text", "id": "trust_1", "label": "Item 1", "default": "Scan the batch, see the test" },
+    { "type": "text", "id": "trust_2", "label": "Item 2", "default": "180-day money-back, keep the bottle" },
+    { "type": "text", "id": "trust_3", "label": "Item 3", "default": "Tracked shipping" },
+    { "type": "text", "id": "trust_4", "label": "Item 4", "default": "Ships same day" },
 
     { "type": "header", "content": "5.2 Good numbers. Cold hands." },
     { "type": "checkbox", "id": "show_gap", "label": "Show section", "default": true },
@@ -597,11 +598,12 @@
 
     { "type": "header", "content": "5.12 Guarantee + final CTA" },
     { "type": "checkbox", "id": "show_guarantee", "label": "Show section", "default": true },
-    { "type": "text", "id": "gtee_heading", "label": "Heading", "default": "Try it for 60 days. Keep the bottle either way." },
-    { "type": "richtext", "id": "gtee_body", "label": "Body", "default": "<p>If it's not doing anything for you, email us and get your money back. You don't ship the bottle back. That's the deal.</p>" },
+    { "type": "text", "id": "gtee_heading", "label": "Heading", "default": "Try it for 180 days. Keep the bottle either way." },
+    { "type": "richtext", "id": "gtee_body", "label": "Body", "default": "<p>If it's not doing anything for you in 180 days, email us and get your money back. You don't ship the bottle back. That's the deal.</p>" },
     { "type": "text", "id": "cta_label", "label": "CTA button text", "default": "See the bundles" },
     { "type": "text", "id": "cta_bundle_index", "label": "Preselect bundle index (0 = first bar; leave blank for none)", "default": "1" },
-    { "type": "richtext", "id": "gtee_fineprint", "label": "Risk-reversal fine print (per-day cost, shipping, cancel-anytime)", "default": "<p>Free tracked shipping · 3–5 days · cancel a subscription anytime · from about $1.00/day on the 3-pack.</p>" },
+    { "type": "richtext", "id": "gtee_fineprint", "label": "Risk-reversal fine print (per-day cost, cancel-anytime)", "default": "<p>Tracked shipping · 3–5 days · cancel a subscription anytime · from about $1.00/day on the 3-pack.</p>" },
+    { "type": "text", "id": "shipping_cost", "label": "Shipping cost (leave blank until confirmed)", "default": "" },
     { "type": "text", "id": "contact_line", "label": "Contact line (REAL details — objection #8)", "default": "[COMPANY NAME] · [RETURNS ADDRESS] · [SUPPORT EMAIL] · [SUPPORT PHONE]" },
     { "type": "richtext", "id": "disclaimer", "label": "FDA / DSHEA disclaimer", "default": "<p>These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.</p>" },
 
@@ -676,7 +678,7 @@
         { "type": "faq", "settings": { "question": "Where is it made, and where does the strain come from?", "answer": "<p>Japanese strain, American facility — both on the label, both verifiable. Made in the USA in a cGMP facility; the NSK-SD strain traces to Japan. [TODO — confirm manufacture + strain origin against the spec sheet]</p>" } },
         { "type": "faq", "settings": { "question": "Is it third-party tested? Can I see the certificate?", "answer": "<p>Yes — every lot, with the batch COA published. The QR on the bottle scans to that lot's test. [TODO — confirm testing scope + that the COA/QR is live before shipping this answer]</p>" } },
         { "type": "faq", "settings": { "question": "I have a soy allergy — can I take this?", "answer": "<p>Nattokinase is made by fermenting soybeans, and the enzyme is then purified to trace levels — but this is not certified soy-free. If you have a diagnosed soy allergy, don't take it without speaking to your doctor. [TODO — confirm against the COA allergen panel; if soy protein is detectable this becomes a plain no]</p>" } },
-        { "type": "faq", "settings": { "question": "What if it doesn't work for me?", "answer": "<p>60 days, money back, and you keep the bottle. Email us — you don't ship it back. [TODO — confirm guarantee terms with fulfilment]</p>" } },
+        { "type": "faq", "settings": { "question": "What if it doesn't work for me?", "answer": "<p>180 days, money back, and you keep the bottle. Email us — you don't ship it back. [TODO — confirm guarantee terms with fulfilment]</p>" } },
         { "type": "faq", "settings": { "question": "Can I give this to my parent?", "answer": "<p>A lot of people buy it for a parent or in-law. If they're on medication or have a condition, walk through \"Who should skip this\" with them, or with their doctor, first.</p>" } },
         { "type": "review", "settings": { "headline": "Was taking a 4,000. Might as well have been nothing.", "body": "PLACEHOLDER — I'd been on a cheaper one for months and felt zero difference. Checked my old bottle — 4,000 FU. Switched to this. Different experience." } },
         { "type": "review", "settings": { "headline": "Put my dad on it.", "body": "PLACEHOLDER — Bought it for my father-in-law, 71, cold feet all the time. My wife says he's been walking the dog the full loop again." } }
