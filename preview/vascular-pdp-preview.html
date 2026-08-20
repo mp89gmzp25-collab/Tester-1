@@ -29,7 +29,8 @@
     --vp-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
     background: var(--vp-paper);
     color: var(--vp-ink);
-    font-family: Georgia, "Times New Roman", serif; /* stand-in for theme body face */
+    /* STAND-IN humanist-sans body face — final body font TBD before launch */
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   #vp-preview .vp-root, #vp-preview * { box-sizing: border-box; }
 
@@ -38,7 +39,8 @@
   #vp-preview .vp-inner--wide { max-width: var(--vp-wide); }
 
   #vp-preview .vp-h {
-    font-family: "Georgia", serif; /* stand-in for theme heading face */
+    /* STAND-IN characterful display face — final display font TBD before launch */
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
     font-weight: 700; font-size: clamp(1.6rem, 5.5vw, 2.4rem); line-height: 1.15;
     letter-spacing: -0.01em; margin: 0 0 0.6em; color: var(--vp-ink);
   }
@@ -70,7 +72,8 @@
 
   #vp-preview .vp-scale { margin-top: 22px; }
   #vp-preview .vp-scale__track { position: relative; height: 12px; border-radius: 999px; background: var(--vp-grey-2); margin: 40px 0 10px; }
-  #vp-preview .vp-scale__dova { position: absolute; left: 0; top: 0; height: 100%; width: 100%; border-radius: 999px; background: var(--vp-red); }
+  #vp-preview .vp-scale__dova { position: absolute; right: 0; top: 0; height: 100%; border-radius: 999px; background: var(--vp-red); }
+  #vp-preview .vp-scale__line { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--vp-red); }
   #vp-preview .vp-scale__mark { position: absolute; top: -30px; transform: translateX(-50%); text-align: center; }
   #vp-preview .vp-scale__mark span { font-family: var(--vp-mono); font-size: 0.8125rem; color: var(--vp-grey-1); white-space: nowrap; }
   #vp-preview .vp-scale__mark--dova span { color: var(--vp-red); font-weight: 700; }
@@ -136,7 +139,7 @@
 </head>
 <body>
 
-<div class="vp-note">STATIC PREVIEW — sections/vascular-pdp.liquid with schema defaults. Grey boxes = image_picker slots (labelled with slot + ratio). Resize the window to ~380px to check mobile.</div>
+<div class="vp-note">STATIC PREVIEW — sections/vascular-pdp.liquid with schema defaults. Grey boxes = image_picker slots (labelled with slot + ratio). Fonts are STAND-INS (sans body / serif display) — final faces TBD. Resize to ~380px to check mobile.</div>
 
 <div class="vp-root" id="vp-preview">
 
@@ -196,11 +199,12 @@
       </div>
       <div class="vp-scale" aria-hidden="true">
         <div class="vp-scale__track">
-          <div class="vp-scale__dova"></div>
-          <div class="vp-scale__mark" style="left:8%"><span>2,000 FU</span></div>
-          <div class="vp-scale__mark" style="left:30%"><span>4,000 FU</span></div>
+          <div class="vp-scale__dova" style="left:86%"></div>
+          <div class="vp-scale__line" style="left:86%"></div>
+          <div class="vp-scale__mark" style="left:16%"><span>2,000 FU</span></div>
+          <div class="vp-scale__mark" style="left:33%"><span>4,000 FU</span></div>
           <div class="vp-scale__mark" style="left:42%"><span>5,000 FU</span></div>
-          <div class="vp-scale__mark vp-scale__mark--dova" style="left:98%"><span>Dova 10,000 FU</span></div>
+          <div class="vp-scale__mark vp-scale__mark--dova" style="left:91%"><span>Dova 10,000 FU</span></div>
         </div>
       </div>
     </div>
@@ -214,9 +218,7 @@
         <div class="vp-cmp__row"><p class="vp-cmp__label">FU per serving</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>2,000–5,000</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>10,000</div></div></div>
         <div class="vp-cmp__row"><p class="vp-cmp__label">FU verified per lot</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Rarely</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Yes</div></div></div>
         <div class="vp-cmp__row"><p class="vp-cmp__label">Strain named</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>No</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>NSK-SD</div></div></div>
-        <div class="vp-cmp__row"><p class="vp-cmp__label">Named actives, each dosed</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>1–2, often blended</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>6, every dose printed</div></div></div>
-        <div class="vp-cmp__row"><p class="vp-cmp__label">Co-actives dosed separately</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Proprietary blend</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Every dose printed</div></div></div>
-        <div class="vp-cmp__row"><p class="vp-cmp__label">Proprietary blend</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Often</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>None</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Co-actives — printed or blended?</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Proprietary blend</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>All 6 dosed, no blends</div></div></div>
         <div class="vp-cmp__row"><p class="vp-cmp__label">Third-party tested</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Unclear</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Every lot</div></div></div>
         <div class="vp-cmp__row"><p class="vp-cmp__label">Batch COA published</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>No</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Yes, scannable</div></div></div>
       </div>
@@ -238,7 +240,7 @@
           <div class="vp-ph" style="aspect-ratio:4/3;">disc_img_b — natto in cultural context (heritage, not product) · ~4:3</div>
         </div>
       </div>
-      <blockquote class="vp-card" style="margin-top:24px;font-size:1.2rem;">"As an American, I just take the pill. Way less icky."</blockquote>
+      <p class="vp-copy vp-card" style="margin-top:24px;font-size:1.15rem;">The most common thing people say about it is some version of the same line: they would rather just take the pill.</p>
       <div class="vp-copy" style="margin-top:16px;">
         <p>You've already decided the food is good for you. You've also already decided you're not going to eat it. That's fine. That's the entire point of this product. It's the dose from the food, without the food.</p>
       </div>
@@ -249,9 +251,10 @@
   <section class="vp-band">
     <div class="vp-inner vp-inner--wide">
       <h2 class="vp-h">Every dose is printed. Count it yourself.</h2>
-      <div class="vp-copy" style="margin-bottom:20px;">
+      <div class="vp-copy" style="margin-bottom:14px;">
         <p>No proprietary blends. No circulation matrix hiding three cents of active behind a trademark. Each thing in the bottle is named, dosed, and doing one job. If you can't find the number on the label, we didn't earn the sale.</p>
       </div>
+      <p class="vp-muted" style="margin:0 0 20px;font-size:0.95rem;"><strong>How to take it:</strong> 2 capsules daily, with or without food. Evening preferred.</p>
       <div class="vp-ing">
         <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">10,000 FU</div><div class="vp-ing__name">Nattokinase (NSK-SD)</div><p class="vp-ing__job">The named Japanese strain from the original fibrinolytic research — not generic natto powder. Supports your body's own clearing system, the one that slows after fifty.</p></div>
         <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">100 mg</div><div class="vp-ing__name">Coenzyme Q10 (ubiquinone)</div><p class="vp-ing__job">Heart-muscle energy — a nutrient many people supplement alongside a statin.</p></div>

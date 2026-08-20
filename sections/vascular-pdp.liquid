@@ -108,9 +108,10 @@
     position: relative; height: 12px; border-radius: 999px; background: var(--vp-grey-2); margin: 34px 0 10px;
   }
   #shopify-section-{{ section.id }} .vp-scale__dova {
-    position: absolute; left: 0; top: 0; height: 100%; width: 100%;
+    position: absolute; right: 0; top: 0; height: 100%;
     border-radius: 999px; background: var(--vp-red);
   }
+  #shopify-section-{{ section.id }} .vp-scale__line { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--vp-red); }
   #shopify-section-{{ section.id }} .vp-scale__mark { position: absolute; top: -30px; transform: translateX(-50%); text-align: center; }
   #shopify-section-{{ section.id }} .vp-scale__mark span { font-family: var(--vp-mono); font-size: 0.8125rem; color: var(--vp-grey-1); white-space: nowrap; }
   #shopify-section-{{ section.id }} .vp-scale__mark--dova span { color: var(--vp-red); font-weight: 700; }
@@ -269,11 +270,12 @@
         {%- if s.dose_scale_show -%}
           <div class="vp-scale vp-fade" aria-hidden="true">
             <div class="vp-scale__track">
-              <div class="vp-scale__dova"></div>
+              <div class="vp-scale__dova" style="left:{{ s.dose_threshold_pos }}%"></div>
+              <div class="vp-scale__line" style="left:{{ s.dose_threshold_pos }}%"></div>
               {%- if s.dose_tier_1 != blank -%}<div class="vp-scale__mark" style="left:{{ s.dose_tier_1_pos }}%"><span>{{ s.dose_tier_1 }}</span></div>{%- endif -%}
               {%- if s.dose_tier_2 != blank -%}<div class="vp-scale__mark" style="left:{{ s.dose_tier_2_pos }}%"><span>{{ s.dose_tier_2 }}</span></div>{%- endif -%}
               {%- if s.dose_tier_3 != blank -%}<div class="vp-scale__mark" style="left:{{ s.dose_tier_3_pos }}%"><span>{{ s.dose_tier_3 }}</span></div>{%- endif -%}
-              {%- if s.dose_tier_dova != blank -%}<div class="vp-scale__mark vp-scale__mark--dova" style="left:98%"><span>{{ s.dose_tier_dova }}</span></div>{%- endif -%}
+              {%- if s.dose_tier_dova != blank -%}<div class="vp-scale__mark vp-scale__mark--dova" style="left:{{ s.dose_threshold_pos | plus: 5 }}%"><span>{{ s.dose_tier_dova }}</span></div>{%- endif -%}
             </div>
           </div>
         {%- endif -%}
@@ -326,7 +328,7 @@
           </div>
         </div>
         {%- if s.disc_quote != blank -%}
-          <blockquote class="vp-card" style="margin-top:24px;font-size:1.2rem">{{ s.disc_quote }}</blockquote>
+          <p class="vp-copy vp-card" style="margin-top:24px;font-size:1.15rem">{{ s.disc_quote }}</p>
         {%- endif -%}
         {%- if s.disc_after != blank -%}<div class="vp-copy" style="margin-top:16px">{{ s.disc_after }}</div>{%- endif -%}
       </div>
@@ -338,7 +340,8 @@
     <section class="vp-band">
       <div class="vp-inner vp-inner--wide">
         {%- if s.ing_heading != blank -%}<h2 class="vp-h">{{ s.ing_heading }}</h2>{%- endif -%}
-        {%- if s.ing_intro != blank -%}<div class="vp-copy" style="margin-bottom:20px">{{ s.ing_intro }}</div>{%- endif -%}
+        {%- if s.ing_intro != blank -%}<div class="vp-copy" style="margin-bottom:14px">{{ s.ing_intro }}</div>{%- endif -%}
+        {%- if s.ing_directions != blank -%}<p class="vp-muted" style="margin:0 0 20px;font-size:0.95rem"><strong>How to take it:</strong> {{ s.ing_directions }}</p>{%- endif -%}
         <div class="vp-ing">
           {%- for block in section.blocks -%}
             {%- if block.type == 'ingredient' -%}
@@ -534,13 +537,14 @@
     { "type": "text", "id": "dose_heading", "label": "Heading", "default": "The dose is the whole argument." },
     { "type": "richtext", "id": "dose_body", "label": "Body", "default": "<p>FU stands for fibrinolytic units. It's not the weight of the capsule — it's how much clearing activity is actually in a serving. Two bottles can hold the same milligrams and deliver completely different FU. FU is the number that matters. Everything else on the label is packaging.</p><p>Here's the part the ads got right: below a real dose, the research doesn't apply to what you're holding. Most bottles sell at 2,000 to 5,000 FU per serving. That's not a smaller version of the same thing. It's under the line where the evidence lives.</p><p><strong>About that one study that found nothing.</strong> Someone has probably pointed you at a trial that ran for years, on a few hundred people, and found no effect. Read the method. That trial dosed at roughly 2,000 FU. It didn't test a real dose and come up empty. It tested a fifth of one.</p><p><strong>Why most brands sit under the line.</strong> FU is the expensive part. The cheapest way to sell nattokinase is to put a little in, print the milligrams, and stay quiet about the FU. 10,000 FU per serving is what it costs to be on the right side of the line.</p>" },
     { "type": "checkbox", "id": "dose_scale_show", "label": "Show dose scale visual", "default": true },
-    { "type": "text", "id": "dose_tier_1", "label": "Scale — competitor tier 1", "default": "2,000 FU" },
-    { "type": "range", "id": "dose_tier_1_pos", "label": "Tier 1 position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 8 },
+    { "type": "range", "id": "dose_threshold_pos", "label": "Scale — where the red qualifying zone begins (the 10,000 line)", "min": 55, "max": 95, "step": 1, "unit": "%", "default": 86 },
+    { "type": "text", "id": "dose_tier_1", "label": "Scale — competitor tier 1 (sits in grey, under the line)", "default": "2,000 FU" },
+    { "type": "range", "id": "dose_tier_1_pos", "label": "Tier 1 position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 16 },
     { "type": "text", "id": "dose_tier_2", "label": "Scale — competitor tier 2", "default": "4,000 FU" },
-    { "type": "range", "id": "dose_tier_2_pos", "label": "Tier 2 position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 30 },
+    { "type": "range", "id": "dose_tier_2_pos", "label": "Tier 2 position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 33 },
     { "type": "text", "id": "dose_tier_3", "label": "Scale — competitor tier 3", "default": "5,000 FU" },
     { "type": "range", "id": "dose_tier_3_pos", "label": "Tier 3 position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 42 },
-    { "type": "text", "id": "dose_tier_dova", "label": "Scale — Dova (pinned right)", "default": "Dova 10,000 FU" },
+    { "type": "text", "id": "dose_tier_dova", "label": "Scale — Dova (sits in the red zone)", "default": "Dova 10,000 FU" },
 
     { "type": "header", "content": "5.5 Comparison (add comparison rows as blocks)" },
     { "type": "checkbox", "id": "show_comparison", "label": "Show section", "default": true },
@@ -554,13 +558,14 @@
     { "type": "richtext", "id": "disc_body", "label": "Body", "default": "<p>The enzyme wasn't found by a company screening exotic compounds for something to sell. It was found in a food people in one part of Japan had been eating at breakfast, every day, for something like a thousand years. [CITATION NEEDED — nattokinase discovery attribution] A researcher looked at a traditional fermented food and asked what the sticky part was doing. The sticky part was the enzyme.</p><p>That's the honest version. Not a breakthrough. An old food, looked at closely.</p><p>Which leaves one problem, and if you've ever been near a bowl of it you already know what it is.</p>" },
     { "type": "image_picker", "id": "disc_img_a", "label": "Image A — lab / bench context" },
     { "type": "image_picker", "id": "disc_img_b", "label": "Image B — natto in cultural context (heritage, not product)" },
-    { "type": "inline_richtext", "id": "disc_quote", "label": "Pull-quote (PLACEHOLDER — replace with a real customer voice)", "default": "\"As an American, I just take the pill. Way less icky.\"" },
+    { "type": "inline_richtext", "id": "disc_quote", "label": "Narration line (not a testimonial — no attribution)", "default": "The most common thing people say about it is some version of the same line: they would rather just take the pill." },
     { "type": "richtext", "id": "disc_after", "label": "After the quote", "default": "<p>You've already decided the food is good for you. You've also already decided you're not going to eat it. That's fine. That's the entire point of this product. It's the dose from the food, without the food.</p>" },
 
     { "type": "header", "content": "5.7 Ingredient grid (add ingredients as blocks)" },
     { "type": "checkbox", "id": "show_ingredients", "label": "Show section", "default": true },
     { "type": "text", "id": "ing_heading", "label": "Heading", "default": "Every dose is printed. Count it yourself." },
     { "type": "richtext", "id": "ing_intro", "label": "Intro", "default": "<p>No proprietary blends. No circulation matrix hiding three cents of active behind a trademark. Each thing in the bottle is named, dosed, and doing one job. If you can't find the number on the label, we didn't earn the sale.</p>" },
+    { "type": "text", "id": "ing_directions", "label": "Directions line (near the grid)", "default": "2 capsules daily, with or without food. Evening preferred." },
     { "type": "richtext", "id": "ing_close", "label": "Closing card", "default": "<p>You don't need more bottles. You need the doses in the bottles you already own to be real.</p>" },
 
     { "type": "header", "content": "5.8 What to expect, and when" },
@@ -658,9 +663,7 @@
         { "type": "comparison_row" },
         { "type": "comparison_row", "settings": { "label": "FU verified per lot", "generic_value": "Rarely", "dova_value": "Yes" } },
         { "type": "comparison_row", "settings": { "label": "Strain named", "generic_value": "No", "dova_value": "NSK-SD" } },
-        { "type": "comparison_row", "settings": { "label": "Named actives, each dosed", "generic_value": "1–2, often blended", "dova_value": "6, every dose printed" } },
-        { "type": "comparison_row", "settings": { "label": "Co-actives dosed separately", "generic_value": "Proprietary blend", "dova_value": "Every dose printed" } },
-        { "type": "comparison_row", "settings": { "label": "Proprietary blend", "generic_value": "Often", "dova_value": "None" } },
+        { "type": "comparison_row", "settings": { "label": "Co-actives — printed or blended?", "generic_value": "Proprietary blend", "dova_value": "All 6 dosed, no blends" } },
         { "type": "comparison_row", "settings": { "label": "Third-party tested", "generic_value": "Unclear", "dova_value": "Every lot" } },
         { "type": "comparison_row", "settings": { "label": "Batch COA published", "generic_value": "No", "dova_value": "Yes, scannable" } },
         { "type": "review" },
