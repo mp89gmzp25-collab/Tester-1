@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vascular PDP — static preview</title>
+<style>
+  /* ============================================================
+     STATIC PREVIEW of sections/vascular-pdp.liquid
+     Liquid stripped, schema defaults hardcoded, CSS inlined,
+     image pickers shown as labelled grey placeholders.
+     No build step, no server — open directly in a browser.
+     Scope changed from #shopify-section-{id} to #vp-preview.
+     ============================================================ */
+  body { margin: 0; background: #cfc8ba; }
+  .vp-note {
+    max-width: 60rem; margin: 0 auto; padding: 10px 16px; font: 13px/1.5 ui-monospace, Menlo, monospace;
+    color: #4a463d; background: #e7e0d0; border-bottom: 1px solid #cbc3b2; text-align: center;
+  }
+
+  #vp-preview.vp-root {
+    --vp-paper: #F2ECDE;
+    --vp-ink: #17140F;
+    --vp-red: #C0362C;
+    --vp-grey-1: #726B5E;
+    --vp-grey-2: #DBD3C4;
+    --vp-maxw: 44rem;
+    --vp-wide: 60rem;
+    --vp-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    background: var(--vp-paper);
+    color: var(--vp-ink);
+    font-family: Georgia, "Times New Roman", serif; /* stand-in for theme body face */
+  }
+  #vp-preview .vp-root, #vp-preview * { box-sizing: border-box; }
+
+  #vp-preview .vp-band { padding: 40px 20px; }
+  #vp-preview .vp-inner { max-width: var(--vp-maxw); margin: 0 auto; }
+  #vp-preview .vp-inner--wide { max-width: var(--vp-wide); }
+
+  #vp-preview .vp-h {
+    font-family: "Georgia", serif; /* stand-in for theme heading face */
+    font-weight: 700; font-size: clamp(1.6rem, 5.5vw, 2.4rem); line-height: 1.15;
+    letter-spacing: -0.01em; margin: 0 0 0.6em; color: var(--vp-ink);
+  }
+  #vp-preview .vp-copy { font-size: 1.0625rem; line-height: 1.65; color: var(--vp-ink); }
+  #vp-preview .vp-copy p { margin: 0 0 1em; }
+  #vp-preview .vp-copy p:last-child { margin-bottom: 0; }
+  #vp-preview .vp-muted { color: var(--vp-grey-1); }
+
+  #vp-preview .vp-mono { font-family: var(--vp-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+  /* image placeholders (stand in for image_picker slots) */
+  #vp-preview .vp-ph {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    background: var(--vp-grey-2); color: var(--vp-grey-1);
+    border: 1px dashed #b3a992; border-radius: 10px;
+    font-family: var(--vp-mono); font-size: 0.8rem; line-height: 1.4; padding: 10px;
+  }
+
+  #vp-preview .vp-trust { background: var(--vp-ink); color: var(--vp-paper); padding: 14px 20px; }
+  #vp-preview .vp-trust ul { list-style: none; margin: 0 auto; padding: 0; max-width: var(--vp-wide); display: flex; flex-wrap: wrap; gap: 8px 22px; justify-content: center; font-size: 0.9375rem; }
+  #vp-preview .vp-trust li { display: flex; align-items: center; gap: 7px; }
+  #vp-preview .vp-trust .vp-mono { color: var(--vp-red); font-weight: 700; }
+  #vp-preview .vp-trust svg { width: 15px; height: 15px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  #vp-preview .vp-steps { list-style: none; margin: 0; padding: 0; counter-reset: vp; }
+  #vp-preview .vp-steps li { counter-increment: vp; position: relative; padding: 0 0 20px 52px; margin: 0; }
+  #vp-preview .vp-steps li::before { content: counter(vp); position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%; background: transparent; border: 1.5px solid var(--vp-grey-2); color: var(--vp-red); font-family: var(--vp-mono); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+  #vp-preview .vp-steps li:last-child { padding-bottom: 0; }
+
+  #vp-preview .vp-scale { margin-top: 22px; }
+  #vp-preview .vp-scale__track { position: relative; height: 12px; border-radius: 999px; background: var(--vp-grey-2); margin: 40px 0 10px; }
+  #vp-preview .vp-scale__dova { position: absolute; left: 0; top: 0; height: 100%; width: 100%; border-radius: 999px; background: var(--vp-red); }
+  #vp-preview .vp-scale__mark { position: absolute; top: -30px; transform: translateX(-50%); text-align: center; }
+  #vp-preview .vp-scale__mark span { font-family: var(--vp-mono); font-size: 0.8125rem; color: var(--vp-grey-1); white-space: nowrap; }
+  #vp-preview .vp-scale__mark--dova span { color: var(--vp-red); font-weight: 700; }
+  #vp-preview .vp-scale__mark::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 1px; height: 8px; background: var(--vp-grey-1); }
+
+  #vp-preview .vp-cmp { display: grid; gap: 12px; margin-top: 8px; }
+  #vp-preview .vp-cmp__row { border: 1px solid var(--vp-grey-2); border-radius: 10px; padding: 14px 16px; }
+  #vp-preview .vp-cmp__label { font-weight: 700; font-size: 0.95rem; margin: 0 0 8px; }
+  #vp-preview .vp-cmp__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  #vp-preview .vp-cmp__cell { font-size: 0.95rem; }
+  #vp-preview .vp-cmp__cell small { display: block; color: var(--vp-grey-1); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  #vp-preview .vp-cmp__cell--dova { color: var(--vp-ink); font-weight: 600; }
+  #vp-preview .vp-cmp__cell--generic { color: var(--vp-grey-1); }
+
+  #vp-preview .vp-ing { display: grid; gap: 14px; grid-template-columns: 1fr; margin-top: 8px; }
+  #vp-preview .vp-ing__card { border: 1px solid var(--vp-grey-2); border-radius: 12px; padding: 16px; }
+  #vp-preview .vp-ing__dose { font-family: var(--vp-mono); color: var(--vp-red); font-weight: 700; font-size: 1.05rem; }
+  #vp-preview .vp-ing__name { font-weight: 700; font-size: 1.05rem; margin: 2px 0 6px; }
+  #vp-preview .vp-ing__job { font-size: 0.9875rem; line-height: 1.55; color: var(--vp-ink); margin: 0; }
+  #vp-preview .vp-ing__ph { aspect-ratio: 1 / 1; margin-bottom: 10px; }
+  #vp-preview .vp-card { margin-top: 18px; border-left: 3px solid var(--vp-red); padding: 4px 0 4px 16px; font-size: 1.0625rem; line-height: 1.55; }
+
+  #vp-preview .vp-horizon { border-top: 1px solid var(--vp-grey-2); padding: 16px 0; }
+  #vp-preview .vp-horizon:first-of-type { border-top: 0; }
+  #vp-preview .vp-horizon h3 { margin: 0 0 6px; font-size: 1rem; font-family: var(--vp-mono); color: var(--vp-red); letter-spacing: -0.01em; }
+
+  #vp-preview .vp-safety ul { padding-left: 1.1em; }
+  #vp-preview .vp-safety li { margin-bottom: 0.5em; }
+
+  #vp-preview .vp-rev { display: grid; gap: 14px; margin-top: 8px; }
+  #vp-preview .vp-rev__card { border: 1px solid var(--vp-grey-2); border-radius: 12px; padding: 16px; }
+  #vp-preview .vp-rev__meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: 0.875rem; color: var(--vp-grey-1); margin-bottom: 6px; }
+  #vp-preview .vp-rev__verified { color: var(--vp-red); font-weight: 600; }
+  #vp-preview .vp-rev__stars { color: var(--vp-red); letter-spacing: 1px; }
+  #vp-preview .vp-rev__count { font-family: var(--vp-mono); }
+  #vp-preview .vp-rev__head { font-weight: 700; margin: 0 0 4px; }
+  #vp-preview .vp-rev__body { margin: 0; font-size: 0.9875rem; line-height: 1.55; }
+
+  #vp-preview .vp-faq details { border-bottom: 1px solid var(--vp-grey-2); }
+  #vp-preview .vp-faq summary { cursor: pointer; padding: 16px 30px 16px 0; position: relative; font-weight: 600; font-size: 1.0625rem; list-style: none; }
+  #vp-preview .vp-faq summary::-webkit-details-marker { display: none; }
+  #vp-preview .vp-faq summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font-family: var(--vp-mono); color: var(--vp-red); font-size: 1.3rem; }
+  #vp-preview .vp-faq details[open] summary::after { content: "\2013"; }
+  #vp-preview .vp-faq__a { padding: 0 0 16px; font-size: 1rem; line-height: 1.6; color: var(--vp-ink); }
+  #vp-preview .vp-faq__a p { margin: 0; }
+
+  #vp-preview .vp-cta { display: inline-block; background: var(--vp-red); color: var(--vp-paper); font-weight: 700; font-size: 1.0625rem; text-decoration: none; padding: 15px 30px; border-radius: 999px; border: 0; cursor: pointer; }
+  #vp-preview .vp-cta:hover { filter: brightness(0.94); }
+  #vp-preview .vp-cta-wrap { text-align: center; margin: 18px 0 10px; }
+  #vp-preview .vp-fineprint { font-size: 0.875rem; color: var(--vp-grey-1); text-align: center; line-height: 1.5; }
+  #vp-preview .vp-fineprint .vp-mono { color: var(--vp-grey-1); }
+  #vp-preview .vp-disclaimer { font-size: 0.8125rem; color: var(--vp-grey-1); line-height: 1.5; }
+
+  #vp-preview a:focus-visible, #vp-preview summary:focus-visible, #vp-preview .vp-cta:focus-visible { outline: 3px solid var(--vp-red); outline-offset: 2px; border-radius: 4px; }
+
+  @media (min-width: 750px) {
+    #vp-preview .vp-band { padding: 64px 24px; }
+    #vp-preview .vp-ing { grid-template-columns: 1fr 1fr; }
+    #vp-preview .vp-rev { grid-template-columns: 1fr 1fr; }
+    #vp-preview .vp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="vp-note">STATIC PREVIEW — sections/vascular-pdp.liquid with schema defaults. Grey boxes = image_picker slots (labelled with slot + ratio). Resize the window to ~380px to check mobile.</div>
+
+<div class="vp-root" id="vp-preview">
+
+  <!-- 5.1 TRUST BAR -->
+  <div class="vp-trust">
+    <ul>
+      <li><span class="vp-mono">10,000 FU per serving</span></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Third-party tested, every lot</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Scan the batch, see the test</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>cGMP facility</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>No proprietary blends</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>60-day money-back</li>
+    </ul>
+  </div>
+
+  <!-- 5.2 GOOD NUMBERS. COLD HANDS. -->
+  <section class="vp-band">
+    <div class="vp-inner vp-inner--wide">
+      <div class="vp-split">
+        <div>
+          <h2 class="vp-h">Good numbers. Cold hands.</h2>
+          <div class="vp-copy">
+            <p>Your last bloodwork came back fine. The doctor said keep doing what you're doing. And you still can't feel your feet by the evening, your hands go cold at your desk, and the stairs take something out of you they didn't used to.</p>
+            <p>A blood test is an inventory. It counts what's floating in your blood on the morning they draw it. It has never once measured how the blood moves — how easily it gets to your hands, your feet, the small vessels at the ends of you.</p>
+            <p>That's the gap. Good numbers on paper. Cold hands in the room. This page is about the second one.</p>
+          </div>
+        </div>
+        <div class="vp-ph" style="aspect-ratio:4/3;">gap_img — person 55–70 at home with a lab printout · ~4:3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.3 BUILD & CLEAR -->
+  <section class="vp-band">
+    <div class="vp-inner">
+      <h2 class="vp-h">Your body builds and clears all day. After fifty, one side slows down.</h2>
+      <ol class="vp-steps vp-copy">
+        <li><strong>You build small repairs constantly.</strong> Every time a vessel takes a little wear, your body patches it. This is normal. It's supposed to happen.</li>
+        <li><strong>Then a clearing system breaks those patches back down</strong> so the blood keeps moving freely. Build, clear, build, clear — all day, without you noticing.</li>
+        <li><strong>After about fifty, the clearing side slows.</strong> The building side doesn't. [CITATION NEEDED — fibrinolytic decline with age]</li>
+        <li><strong>So you build like you're 25 and clear like you're 65.</strong> Same repairs going up. Fewer coming back down.</li>
+        <li><strong>Here's the part nobody mentions.</strong> Diet, exercise, and almost every bottle on the counter are aimed at building less. Almost nothing is aimed at clearing more. That's the side that slowed down.</li>
+      </ol>
+      <div class="vp-copy vp-card">That's why this is a different conversation from your statin or your fish oil. Those work on the building side. This supports your body's normal fibrinolytic activity — the clearing side — so blood keeps moving the way it did when the clearing kept up. [CITATION NEEDED — nattokinase fibrinolytic mechanism]</div>
+    </div>
+  </section>
+
+  <!-- 5.4 DOSE GATE -->
+  <section class="vp-band" id="vp-dose">
+    <div class="vp-inner">
+      <h2 class="vp-h">The dose is the whole argument.</h2>
+      <div class="vp-copy">
+        <p>FU stands for fibrinolytic units. It's not the weight of the capsule — it's how much clearing activity is actually in a serving. Two bottles can hold the same milligrams and deliver completely different FU. FU is the number that matters. Everything else on the label is packaging.</p>
+        <p>Here's the part the ads got right: below a real dose, the research doesn't apply to what you're holding. Most bottles sell at 2,000 to 5,000 FU per serving. That's not a smaller version of the same thing. It's under the line where the evidence lives.</p>
+        <p><strong>About that one study that found nothing.</strong> Someone has probably pointed you at a trial that ran for years, on a few hundred people, and found no effect. Read the method. That trial dosed at roughly 2,000 FU. It didn't test a real dose and come up empty. It tested a fifth of one.</p>
+        <p><strong>Why most brands sit under the line.</strong> FU is the expensive part. The cheapest way to sell nattokinase is to put a little in, print the milligrams, and stay quiet about the FU. 10,000 FU per serving is what it costs to be on the right side of the line.</p>
+      </div>
+      <div class="vp-scale" aria-hidden="true">
+        <div class="vp-scale__track">
+          <div class="vp-scale__dova"></div>
+          <div class="vp-scale__mark" style="left:8%"><span>2,000 FU</span></div>
+          <div class="vp-scale__mark" style="left:30%"><span>4,000 FU</span></div>
+          <div class="vp-scale__mark" style="left:42%"><span>5,000 FU</span></div>
+          <div class="vp-scale__mark vp-scale__mark--dova" style="left:98%"><span>Dova 10,000 FU</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.5 COMPARISON -->
+  <section class="vp-band">
+    <div class="vp-inner">
+      <h2 class="vp-h">Same word on the label. Different thing in the bottle.</h2>
+      <div class="vp-cmp">
+        <div class="vp-cmp__row"><p class="vp-cmp__label">FU per serving</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>2,000–5,000</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>10,000</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">FU verified per lot</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Rarely</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Yes</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Strain named</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>No</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>NSK-SD</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Named actives, each dosed</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>1–2, often blended</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>6, every dose printed</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Co-actives dosed separately</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Proprietary blend</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Every dose printed</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Proprietary blend</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Often</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>None</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Third-party tested</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>Unclear</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Every lot</div></div></div>
+        <div class="vp-cmp__row"><p class="vp-cmp__label">Batch COA published</p><div class="vp-cmp__cols"><div class="vp-cmp__cell vp-cmp__cell--generic"><small>Generic nattokinase</small>No</div><div class="vp-cmp__cell vp-cmp__cell--dova"><small>Dova</small>Yes, scannable</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.6 DISCOVERY -->
+  <section class="vp-band">
+    <div class="vp-inner vp-inner--wide">
+      <h2 class="vp-h">Nobody invented this in a lab.</h2>
+      <div class="vp-split">
+        <div class="vp-copy">
+          <p>The enzyme wasn't found by a company screening exotic compounds for something to sell. It was found in a food people in one part of Japan had been eating at breakfast, every day, for something like a thousand years. [CITATION NEEDED — nattokinase discovery attribution] A researcher looked at a traditional fermented food and asked what the sticky part was doing. The sticky part was the enzyme.</p>
+          <p>That's the honest version. Not a breakthrough. An old food, looked at closely.</p>
+          <p>Which leaves one problem, and if you've ever been near a bowl of it you already know what it is.</p>
+        </div>
+        <div>
+          <div class="vp-ph" style="aspect-ratio:4/3; margin-bottom:12px;">disc_img_a — lab / bench context · ~4:3</div>
+          <div class="vp-ph" style="aspect-ratio:4/3;">disc_img_b — natto in cultural context (heritage, not product) · ~4:3</div>
+        </div>
+      </div>
+      <blockquote class="vp-card" style="margin-top:24px;font-size:1.2rem;">"As an American, I just take the pill. Way less icky."</blockquote>
+      <div class="vp-copy" style="margin-top:16px;">
+        <p>You've already decided the food is good for you. You've also already decided you're not going to eat it. That's fine. That's the entire point of this product. It's the dose from the food, without the food.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.7 INGREDIENT GRID -->
+  <section class="vp-band">
+    <div class="vp-inner vp-inner--wide">
+      <h2 class="vp-h">Every dose is printed. Count it yourself.</h2>
+      <div class="vp-copy" style="margin-bottom:20px;">
+        <p>No proprietary blends. No circulation matrix hiding three cents of active behind a trademark. Each thing in the bottle is named, dosed, and doing one job. If you can't find the number on the label, we didn't earn the sale.</p>
+      </div>
+      <div class="vp-ing">
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">10,000 FU</div><div class="vp-ing__name">Nattokinase (NSK-SD)</div><p class="vp-ing__job">The named Japanese strain from the original fibrinolytic research — not generic natto powder. Supports your body's own clearing system, the one that slows after fifty.</p></div>
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">100 mg</div><div class="vp-ing__name">Coenzyme Q10 (ubiquinone)</div><p class="vp-ing__job">Heart-muscle energy — a nutrient many people supplement alongside a statin.</p></div>
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">100 mg</div><div class="vp-ing__name">Pine Bark Extract (95% proanthocyanidins)</div><p class="vp-ing__job">The small vessels at the ends of you. Hands, feet, fingertips.</p></div>
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">600 mg</div><div class="vp-ing__name">Aged Garlic Extract</div><p class="vp-ing__job">Kyolic-grade, long used for healthy blood pressure — and the one ingredient people already ask about by name.</p></div>
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">100 mg</div><div class="vp-ing__name">Turmeric (95% curcuminoids)</div><p class="vp-ing__job">Works alongside the enzyme rather than duplicating it.</p></div>
+        <div class="vp-ing__card"><div class="vp-ph vp-ing__ph">ingredient image · ~1:1</div><div class="vp-ing__dose">50 mg (500 GDU/g)</div><div class="vp-ing__name">Bromelain</div><p class="vp-ing__job">Proteolytic support — and it helps the enzyme survive the trip.</p></div>
+      </div>
+      <div class="vp-copy vp-card" style="margin-top:22px;font-size:1.15rem;">You don't need more bottles. You need the doses in the bottles you already own to be real.</div>
+    </div>
+  </section>
+
+  <!-- 5.8 WHAT TO EXPECT -->
+  <section class="vp-band">
+    <div class="vp-inner">
+      <h2 class="vp-h">What you might feel, and roughly when.</h2>
+      <div class="vp-copy" style="margin-bottom:8px;"><p>Honest version. Bodies differ. Nobody can promise you a date. Here's the shape of what people tend to report.</p></div>
+      <div class="vp-horizon"><h3>Weeks 1–4</h3><div class="vp-copy"><p>The early, felt stuff. Usually where people notice something first: hands and feet that aren't as cold, a little less of that heavy, done-by-3pm feeling. Small, but it's the part you can feel. [CITATION NEEDED — early functional timeline / onset]</p></div></div>
+      <div class="vp-horizon"><h3>Months 2–3</h3><div class="vp-copy"><p>It settles in. The early changes tend to become the normal state rather than a good day here and there. Taken consistently, at the dose.</p></div></div>
+      <div class="vp-horizon"><h3>Longer term</h3><div class="vp-copy"><p>The structural side — supporting healthy circulation and normal blood flow over time, as part of looking after your cardiovascular function. Careful language on purpose: this is support, taken daily, not a fix on a deadline. [CITATION NEEDED — long-term circulatory support]</p></div></div>
+      <div class="vp-copy vp-muted" style="margin-top:14px;"><p>If someone's selling you a specific week when everything changes, they're guessing louder than we are.</p></div>
+    </div>
+  </section>
+
+  <!-- 5.9 WHO SHOULD SKIP -->
+  <section class="vp-band" id="vp-safety">
+    <div class="vp-inner">
+      <h2 class="vp-h">This isn't right for everyone. Here's who should skip it, or ask first.</h2>
+      <div class="vp-copy vp-safety">
+        <p>Most brands won't put this on the page. We'd rather you trust the rest of it. Talk to your doctor before starting if you:</p>
+        <ul>
+          <li>Take a blood thinner or antiplatelet — warfarin, Eliquis, Xarelto, aspirin, clopidogrel.</li>
+          <li>Have a diagnosed bleeding or clotting disorder.</li>
+          <li>Have surgery or a dental procedure scheduled — stop at least two weeks beforehand and tell your surgeon.</li>
+          <li>Take blood pressure medication (it may compound the effect).</li>
+          <li>Have a diagnosed soy allergy. [TODO: confirm soy-allergen status against the COA panel]</li>
+          <li>Are pregnant or nursing.</li>
+          <li>Are under 18.</li>
+        </ul>
+      </div>
+      <div class="vp-copy" style="margin-top:14px;"><p><strong>On the "won't it break plaque loose" question.</strong> It's fair and it deserves a straight answer instead of silence. Nattokinase supports your body's normal, continuous fibrinolytic activity — the everyday clearing described above — rather than acting on established deposits. It is not a drug that forces anything. [CITATION NEEDED — fibrinolytic safety profile] If you have diagnosed arterial disease, stents, or known plaque, that's exactly the situation where you start with your cardiologist, not a page on the internet.</p></div>
+      <div class="vp-copy vp-card" style="margin-top:16px;"><p>If a supplement company is willing to tell you who shouldn't buy it, that's usually a sign about how they'll treat you after you do.</p></div>
+    </div>
+  </section>
+
+  <!-- 5.10 REVIEWS -->
+  <section class="vp-band">
+    <div class="vp-inner vp-inner--wide">
+      <h2 class="vp-h">What people tell us</h2>
+      <div class="vp-rev">
+        <div class="vp-rev__card">
+          <div class="vp-rev__meta"><span class="vp-rev__stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>PLACEHOLDER</span><span class="vp-rev__verified">Verified</span></div>
+          <p class="vp-rev__head">Checked with my cardiologist first</p>
+          <p class="vp-rev__body">PLACEHOLDER — replace with a verified review. I'm on a low-dose aspirin so I asked my cardiologist before starting. A month in and my hands aren't blocks of ice at my desk anymore.</p>
+        </div>
+        <div class="vp-rev__card">
+          <div class="vp-rev__meta"><span class="vp-rev__stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>PLACEHOLDER</span><span class="vp-rev__verified">Verified</span></div>
+          <p class="vp-rev__head">Was taking a 4,000. Might as well have been nothing.</p>
+          <p class="vp-rev__body">PLACEHOLDER — I'd been on a cheaper one for months and felt zero difference. Checked my old bottle — 4,000 FU. Switched to this. Different experience.</p>
+        </div>
+        <div class="vp-rev__card">
+          <div class="vp-rev__meta"><span class="vp-rev__stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>PLACEHOLDER</span><span class="vp-rev__verified">Verified</span></div>
+          <p class="vp-rev__head">Put my dad on it.</p>
+          <p class="vp-rev__body">PLACEHOLDER — Bought it for my father-in-law, 71, cold feet all the time. My wife says he's been walking the dog the full loop again.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.11 FAQ -->
+  <section class="vp-band">
+    <div class="vp-inner">
+      <h2 class="vp-h">Questions people actually ask</h2>
+      <div class="vp-faq">
+        <details open><summary>Why 10,000 FU?</summary><div class="vp-faq__a"><p>Because below a real dose, the research doesn't apply to what you're holding. Most bottles sell at 2,000–5,000 FU per serving. 10,000 is on the right side of the line the evidence sits on. [CITATION NEEDED — dose threshold]</p></div></details>
+        <details><summary>Can I take this with my blood thinner?</summary><div class="vp-faq__a"><p>Ask your doctor before you start. It supports the same clearing side that thinners act on, so that's a conversation for the two of you. See "Who should skip this."</p></div></details>
+        <details><summary>Can I take it with a statin or a blood-pressure medication?</summary><div class="vp-faq__a"><p>Those work on the building side; this works on the clearing side. Many people take both, but confirm with the doctor who manages your prescriptions. Not medical advice.</p></div></details>
+        <details><summary>Is it safe if I have stents?</summary><div class="vp-faq__a"><p>That's exactly the situation to start with your doctor, not with a page on the internet. We mean that.</p></div></details>
+        <details><summary>How long until I feel something?</summary><div class="vp-faq__a"><p>Commonly weeks 1–4 for the felt changes — warmer hands and feet, less afternoon heaviness — settling over months 2–3. No honest brand can give you a date.</p></div></details>
+        <details><summary>Why not just eat natto?</summary><div class="vp-faq__a"><p>You can. Most people won't — you already know why. And you can't practically eat 10,000 FU of activity in a bowl anyway. This is the dose, without the breakfast.</p></div></details>
+        <details><summary>Where is it made, and where does the strain come from?</summary><div class="vp-faq__a"><p>Japanese strain, American facility — both on the label, both verifiable. Made in the USA in a cGMP facility; the NSK-SD strain traces to Japan. [TODO — confirm manufacture + strain origin against the spec sheet]</p></div></details>
+        <details><summary>Is it third-party tested? Can I see the certificate?</summary><div class="vp-faq__a"><p>Yes — every lot, with the batch COA published. The QR on the bottle scans to that lot's test. [TODO — confirm testing scope + that the COA/QR is live before shipping this answer]</p></div></details>
+        <details><summary>I have a soy allergy — can I take this?</summary><div class="vp-faq__a"><p>Nattokinase is made by fermenting soybeans, and the enzyme is then purified to trace levels — but this is not certified soy-free. If you have a diagnosed soy allergy, don't take it without speaking to your doctor. [TODO — confirm against the COA allergen panel; if soy protein is detectable this becomes a plain no]</p></div></details>
+        <details><summary>What if it doesn't work for me?</summary><div class="vp-faq__a"><p>60 days, money back, and you keep the bottle. Email us — you don't ship it back. [TODO — confirm guarantee terms with fulfilment]</p></div></details>
+        <details><summary>Can I give this to my parent?</summary><div class="vp-faq__a"><p>A lot of people buy it for a parent or in-law. If they're on medication or have a condition, walk through "Who should skip this" with them, or with their doctor, first.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5.12 GUARANTEE + CTA -->
+  <section class="vp-band">
+    <div class="vp-inner">
+      <h2 class="vp-h" style="text-align:center;">Try it for 60 days. Keep the bottle either way.</h2>
+      <div class="vp-copy" style="text-align:center;"><p>If it's not doing anything for you, email us and get your money back. You don't ship the bottle back. That's the deal.</p></div>
+      <div class="vp-cta-wrap"><a href="#vp-dose" class="vp-cta">See the bundles</a></div>
+      <p class="vp-fineprint">Free tracked shipping · 3–5 days · cancel a subscription anytime · from about $1.00/day on the 3-pack.</p>
+      <p class="vp-fineprint" style="margin-top:10px;"><span class="vp-mono">[COMPANY NAME] · [RETURNS ADDRESS] · [SUPPORT EMAIL] · [SUPPORT PHONE]</span></p>
+      <div class="vp-disclaimer vp-inner" style="margin-top:26px;"><p>These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.</p></div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

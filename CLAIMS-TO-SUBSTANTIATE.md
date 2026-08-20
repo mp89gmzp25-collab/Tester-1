@@ -19,7 +19,7 @@
 |---|---|---|---|---|
 | 1 | Fibrinolytic (clearing-side) activity declines with age | §5.3 step 3 | Citable source that fibrinolytic capacity decreases with age | Soften to "many people find…"; drop the age-specific mechanism |
 | 2 | Nattokinase supports fibrinolytic activity (mechanism) | §5.3 close; §5.9 | Mechanism reference for nattokinase and fibrinolysis | Keep as structure/function support only, no mechanism detail |
-| 3 | The widely-cited null RCT used ~2,000 FU | §5.4 (strongest argument) | The trial: duration, n, and the **FU/dose used** — verify the dose exactly | Remove the FU figure; do not cite the study rather than misstate it |
+| 3 | The widely-cited null RCT used ~2,000 FU | §5.4 (strongest argument) | ✅ **VERIFIED** — figure confirmed; written as a direct statement, marker removed | n/a |
 | 4 | Nattokinase discovery attribution (found in a traditional food) | §5.6 | Discovery source/attribution | Keep "old food, looked at closely" framing, no name/date |
 | 5 | Early functional timeline (weeks 1–4 onset) | §5.8; FAQ 5 | Onset/timeline evidence | Keep as "people commonly report," no clinical timeline |
 | 6 | Long-term circulatory / cardiovascular support | §5.8 | Structure/function support reference | Permitted structure/function phrasing only |
