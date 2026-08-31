@@ -1,0 +1,373 @@
+{%- comment -%}
+  ============================================================================
+  HOLIDAY SALES BAR — Custom Liquid version (no schema, no theme-editor UI)
+  ----------------------------------------------------------------------------
+  Same auto-recurring calendar + countdown/flash timer as the section, but all
+  settings are variables in the EDIT HERE block below. Downsides vs the section:
+  no editor controls, no repeatable "extra sale" blocks (edit the calendar
+  array by hand), and sticky/announcement placement is weaker. Prefer the
+  section unless you specifically need this inline.
+
+  Record: start | end | priority | flash_from | bg | text | accent | line1 | line2
+    start/end/flash_from : MM-DD (year ignored). start > end wraps the year.
+    flash_from : LAST day of the countdown (deadline). Flash rolls over AFTER it.
+  ============================================================================
+{%- endcomment -%}
+
+{%- liquid
+  # ===== EDIT HERE =========================================================
+  assign flash_minutes = 120
+  assign timer_switch_hours = 48
+  assign always_seconds = true
+
+  assign timer_box_color = '#FFFFFF'
+  assign timer_digit_color = '#111111'
+  assign timer_label_color = '#888888'
+
+  assign show_default = true
+  assign default_headline_1 = '⚡ FLASH SALE'
+  assign default_headline_2 = 'UP TO 25% OFF SITEWIDE'
+  assign default_bg_color = '#D83C36'
+  assign default_bg_gradient = ''
+  assign default_text_color = '#FFFFFF'
+  assign default_accent_color = '#D83C36'
+  assign default_url = ''
+  assign default_enable_timer = true
+  assign default_timer_mode = 'window'
+  assign default_rolling_hours = 2
+  assign default_rolling_minutes = 0
+
+  assign visibility = 'always-display'
+  assign custom_section_id = ''
+
+  assign hidden_products = ''
+  assign enable_specific_display = false
+  assign displayed_products = ''
+
+  assign padding_top = 0
+  assign padding_bottom = 0
+  # ===== END EDIT ==========================================================
+
+  assign uid = section.id | default: 'hsb'
+-%}
+
+{%- capture sched -%}
+12-01|02-29|5||#14284A|#FFFFFF|#7FB2D9|❄️ WINTER SALE|UP TO 25% OFF SITEWIDE##
+03-01|05-19|5||#2F6E4E|#FFFFFF||🌱 SPRING SALE|UP TO 25% OFF SITEWIDE##
+05-20|08-20|5||#C0392B|#FFFFFF||☀️ SUMMER SALE|UP TO 25% OFF SITEWIDE##
+08-21|11-30|5||#7A3B1E|#FFFFFF||🍂 FALL SALE|UP TO 25% OFF SITEWIDE##
+01-31|02-16|10|02-14|#8E1B3A|#FFFFFF||❤️ VALENTINE'S SALE|TREAT YOURSELF. UP TO 25% OFF##
+03-14|03-30|10|03-28|#3E7C59|#FFFFFF||🐣 EASTER SALE|UP TO 25% OFF SITEWIDE##
+05-11|05-27|10|05-25|#14284A|#FFFFFF|#B22234|🇺🇸 MEMORIAL DAY SALE|SUMMER STARTS NOW. UP TO 30% OFF##
+06-07|06-22|10|06-21|#2C2C2E|#FFFFFF|#D83C36|💪 FATHER'S DAY SALE|UP TO 30% OFF SITEWIDE##
+06-23|06-27|12|06-26|#0B4C8C|#FFFFFF|#FF9900|📦 PRIME DAY SALE|UP TO 30% OFF SITEWIDE##
+06-28|07-06|15|07-04|#B22234|#FFFFFF|#0A2A5E|🇺🇸 4TH OF JULY SALE|UP TO 40% OFF SITEWIDE##
+08-24|09-09|10|09-07|#14284A|#FFFFFF||🛠️ LABOR DAY SALE|UP TO 30% OFF SITEWIDE##
+10-06|10-15|12|10-13|#232F3E|#FFFFFF|#FF9900|📦 BIG DEAL DAYS|UP TO 30% OFF SITEWIDE##
+10-28|10-31|10||#E8681A|#FFFFFF|#16130F|🎃 HALLOWEEN FLASH SALE|UP TO 25% OFF SITEWIDE##
+11-08|11-11|10||#14284A|#FFFFFF||🇺🇸 VETERANS DAY SALE|UP TO 20% OFF SITEWIDE##
+11-15|11-19|20||#1A1A1A|#FFFFFF|#D83C36|💪 INTERNATIONAL MEN'S DAY|UP TO 25% OFF SITEWIDE##
+11-20|11-25|70||#0A0A0A|#FFFFFF|#E8B04B|⚡ EARLY BLACK FRIDAY FLASH|2 HOURS ONLY. UP TO 40% OFF##
+11-26|11-26|90||#0A0A0A|#FFFFFF|#E8B04B|🦃 THANKSGIVING DOORS OPEN|BLACK FRIDAY PRICES ARE LIVE##
+11-27|11-29|100||#0A0A0A|#FFFFFF|#E8B04B|🖤 BLACK FRIDAY|OUR BIGGEST SALE. UP TO 50% OFF##
+11-30|12-01|95||#0B1F3A|#FFFFFF|#3BA7E8|💻 CYBER MONDAY|FINAL HOURS. UP TO 50% OFF##
+12-02|12-06|50||#0A0A0A|#FFFFFF|#E8B04B|🖤 EXTENDED BLACK FRIDAY|LAST CHANCE. UP TO 45% OFF##
+12-02|12-24|40||#0E3B2E|#FFFFFF|#C9A24B|🎄 HOLIDAY SALE|UP TO 40% OFF SITEWIDE##
+12-12|12-14|80||#0E7A3B|#FFFFFF||🚚 FREE SHIPPING DAY|ORDER BY MIDNIGHT FOR CHRISTMAS##
+12-25|12-25|65||#9E1B1B|#FFFFFF|#0E3B2E|🎅 MERRY CHRISTMAS|SELF-GIFT SALE. UP TO 30% OFF##
+12-29|01-04|60||#0A0A0A|#FFFFFF|#E8B04B|🎉 NEW YEAR, NEW YOU|START STRONG. UP TO 40% OFF##
+{%- endcapture -%}
+
+{%- liquid
+  assign displayed = true
+  if hidden_products != blank
+    assign hidden_handles = hidden_products | split: ','
+    for hidden_handle in hidden_handles
+      assign handle_strip = hidden_handle | strip
+      if handle_strip == product.handle
+        assign displayed = false
+        break
+      endif
+    endfor
+  endif
+  if enable_specific_display and displayed_products != blank
+    assign displayed_handles = displayed_products | split: ','
+    assign displayed = false
+    for displayed_handle in displayed_handles
+      assign handle_strip = displayed_handle | strip
+      if handle_strip == product.handle
+        assign displayed = true
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if displayed -%}
+
+  {%- liquid
+    assign today_md = 'now' | date: '%m%d' | plus: 0
+    assign cur_year = 'now' | date: '%Y' | plus: 0
+
+    assign best = -1
+    assign has_active = false
+
+    assign rows = sched | split: '##'
+    for row in rows
+      assign row = row | strip
+      if row == blank
+        continue
+      endif
+      assign f = row | split: '|'
+      assign smd = f[0] | remove: '-' | plus: 0
+      assign emd = f[1] | remove: '-' | plus: 0
+      assign is_active = false
+      if smd > 0 and emd > 0
+        if smd <= emd
+          if today_md >= smd and today_md <= emd
+            assign is_active = true
+          endif
+        else
+          if today_md >= smd or today_md <= emd
+            assign is_active = true
+          endif
+        endif
+      endif
+      if is_active
+        assign pr = f[2] | plus: 0
+        if pr > best
+          assign best = pr
+          assign has_active = true
+          assign w_ff     = f[3]
+          assign w_bg     = f[4]
+          assign w_text   = f[5]
+          assign w_accent = f[6]
+          assign w_l1     = f[7]
+          assign w_l2     = f[8]
+          assign w_url    = ''
+          assign w_timer  = true
+          assign w_key    = f[7] | handle
+        endif
+      endif
+    endfor
+
+    assign flash_secs = flash_minutes | times: 60
+    assign remaining = 0
+    assign window_secs = 0
+
+    if has_active
+      assign f_l1     = w_l1
+      assign f_l2     = w_l2
+      assign f_bg     = w_bg
+      assign f_grad   = ''
+      assign f_text   = w_text
+      assign f_accent = w_accent
+      assign f_url    = w_url
+      assign f_timer  = w_timer
+      assign f_key_id = w_key
+
+      if w_timer
+        if w_ff == blank
+          assign f_mode = 'window'
+          assign window_secs = flash_secs
+        else
+          assign ff_md = w_ff | remove: '-' | plus: 0
+          if today_md <= ff_md
+            assign f_mode = 'fixed'
+            assign target = cur_year | append: '-' | append: w_ff | append: 'T23:59:59'
+            assign now_s = 'now' | date: '%s' | plus: 0
+            assign tgt_s = target | date: '%s' | plus: 0
+            assign remaining = tgt_s | minus: now_s
+            if remaining < 0
+              assign remaining = 0
+            endif
+          else
+            assign f_mode = 'window'
+            assign window_secs = flash_secs
+          endif
+        endif
+      else
+        assign f_mode = 'none'
+      endif
+
+      assign f_render = true
+    else
+      assign f_l1     = default_headline_1
+      assign f_l2     = default_headline_2
+      assign f_bg     = default_bg_color
+      assign f_grad   = default_bg_gradient
+      assign f_text   = default_text_color
+      assign f_accent = default_accent_color
+      assign f_url    = default_url
+      assign f_timer  = default_enable_timer
+      assign f_mode   = default_timer_mode
+      assign f_key_id = 'default'
+      assign f_render = show_default
+      if f_mode == 'window'
+        assign wh = default_rolling_hours | times: 3600
+        assign wm = default_rolling_minutes | times: 60
+        assign window_secs = wh | plus: wm
+      endif
+    endif
+
+    if f_accent == blank
+      assign f_accent = f_bg
+    endif
+  -%}
+
+  {%- if f_render -%}
+    <div{% if custom_section_id != blank %} id="{{ custom_section_id | handleize }}"{% endif %}>
+      {%- if f_url != blank -%}<a href="{{ f_url }}" class="hsb-link">{%- endif -%}
+      <div
+        class="hsb{% unless f_timer %} hsb-no-timer{% endunless %} {{ visibility }} hsb-{{ uid }}-padding"
+        role="region"
+        data-hsb-root
+        data-hsb-timer="{{ f_timer }}"
+        data-hsb-mode="{{ f_mode }}"
+        data-hsb-remaining="{{ remaining }}"
+        data-hsb-window="{{ window_secs }}"
+        data-hsb-switch="{{ timer_switch_hours }}"
+        data-hsb-always-seconds="{{ always_seconds }}"
+        data-hsb-key="hsb-{{ uid }}-{{ f_key_id }}"
+        style="
+          --hsb-bg:{{ f_bg }};
+          --hsb-bg-grad:{% if f_grad != blank %}{{ f_grad }}{% else %}{{ f_bg }}{% endif %};
+          --hsb-text:{{ f_text }};
+          --hsb-colon:{{ f_accent }};
+          --hsb-timer-bg:{{ timer_box_color }};
+          --hsb-digit:{{ timer_digit_color }};
+          --hsb-label:{{ timer_label_color }};
+        "
+      >
+        <div class="hsb-wrap">
+          <div class="hsb-bar">
+            <span class="hsb-headline">
+              {%- if f_l1 != blank -%}<span class="hsb-l1">{{ f_l1 }}</span>{%- endif -%}
+              {%- if f_l2 != blank -%}<span class="hsb-l2">{{ f_l2 }}</span>{%- endif -%}
+            </span>
+            {%- if f_timer -%}
+              <span class="hsb-timer" aria-hidden="true">
+                <span class="hsb-seg"><b data-seg="0">00</b><i data-lbl="0">HRS</i></span>
+                <span class="hsb-colon">:</span>
+                <span class="hsb-seg"><b data-seg="1">00</b><i data-lbl="1">MIN</i></span>
+                <span class="hsb-colon">:</span>
+                <span class="hsb-seg"><b data-seg="2">00</b><i data-lbl="2">SEC</i></span>
+              </span>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+      {%- if f_url != blank -%}</a>{%- endif -%}
+    </div>
+
+    <style>
+      .hsb-{{ uid }}-padding{padding-top:{{ padding_top | times: 0.75 | round: 0 }}px;padding-bottom:{{ padding_bottom | times: 0.75 | round: 0 }}px;}
+      @media screen and (min-width:750px){.hsb-{{ uid }}-padding{padding-top:{{ padding_top }}px;padding-bottom:{{ padding_bottom }}px;}}
+      .hsb-link{display:block;text-decoration:none;}
+      .hsb{background:var(--hsb-bg);background:var(--hsb-bg-grad);color:var(--hsb-text);}
+      .hsb .hsb-wrap{max-width:none;}
+      .hsb .hsb-bar{display:flex;align-items:center;justify-content:center;gap:1.8rem;flex-wrap:nowrap;padding:.7rem 1.2rem;font-family:'Oswald','Montserrat',sans-serif;line-height:1.08;}
+      .hsb.hsb-no-timer .hsb-bar{gap:0;}
+      .hsb .hsb-headline{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;}
+      .hsb.hsb-no-timer .hsb-headline{align-items:center;text-align:center;}
+      .hsb .hsb-l1{font-size:1.85rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;}
+      .hsb .hsb-l2{font-size:1.3rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;opacity:.95;}
+      .hsb .hsb-timer{display:inline-flex;align-items:center;gap:.55rem;background:var(--hsb-timer-bg);border-radius:.8rem;padding:.45rem 1.1rem;box-shadow:0 3px 10px rgba(0,0,0,.22);flex:0 0 auto;}
+      .hsb .hsb-seg{display:inline-flex;flex-direction:column;align-items:center;min-width:3rem;}
+      .hsb .hsb-seg b{font-size:2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:var(--hsb-digit);}
+      .hsb .hsb-seg i{font-style:normal;font-size:.72rem;font-weight:700;letter-spacing:.1em;margin-top:.18rem;color:var(--hsb-label);}
+      .hsb .hsb-colon{font-size:1.7rem;font-weight:800;color:var(--hsb-colon);transform:translateY(-.32rem);}
+      @media (max-width:749px){
+        .hsb .hsb-bar{gap:1rem;padding:.55rem .7rem;}
+        .hsb .hsb-headline{gap:.1rem;}
+        .hsb .hsb-l1{font-size:1.35rem;}
+        .hsb .hsb-l2{font-size:1rem;}
+        .hsb .hsb-timer{gap:.35rem;padding:.4rem .7rem;border-radius:.7rem;}
+        .hsb .hsb-seg{min-width:2.4rem;}
+        .hsb .hsb-seg b{font-size:1.6rem;}
+        .hsb .hsb-seg i{font-size:.62rem;margin-top:.12rem;}
+        .hsb .hsb-colon{font-size:1.35rem;transform:translateY(-.28rem);}
+      }
+    </style>
+
+    <script>
+    (function () {
+      function pad(n){ return n < 10 ? '0' + n : '' + n; }
+      function setSeg(root, i, val, label){
+        var b = root.querySelector('[data-seg="' + i + '"]');
+        var l = root.querySelector('[data-lbl="' + i + '"]');
+        if (b) b.textContent = pad(val);
+        if (l) l.textContent = label;
+      }
+      function windowMs(root){
+        var s = parseInt(root.getAttribute('data-hsb-window'), 10);
+        if (!s || isNaN(s) || s <= 0) s = 7200;
+        return s * 1000;
+      }
+      function resolveTarget(root){
+        var mode = root.getAttribute('data-hsb-mode');
+        var key  = root.getAttribute('data-hsb-key');
+        if (mode === 'fixed'){
+          var rem = parseInt(root.getAttribute('data-hsb-remaining'), 10) || 0;
+          return Date.now() + rem * 1000;
+        }
+        if (mode === 'daily'){
+          var d = new Date(); d.setHours(23, 59, 59, 999); return d.getTime();
+        }
+        var winMs = windowMs(root), now = Date.now();
+        var stored = parseInt(localStorage.getItem(key), 10);
+        if (!stored || isNaN(stored) || stored <= now){
+          stored = now + winMs; localStorage.setItem(key, stored);
+        }
+        return stored;
+      }
+      function run(root){
+        if (root.getAttribute('data-hsb-timer') !== 'true') return;
+        var mode    = root.getAttribute('data-hsb-mode');
+        if (mode === 'none') return;
+        var key     = root.getAttribute('data-hsb-key');
+        var switchH = parseInt(root.getAttribute('data-hsb-switch'), 10);
+        if (isNaN(switchH)) switchH = 48;
+        var alwaysSec = root.getAttribute('data-hsb-always-seconds') === 'true';
+        var target  = resolveTarget(root);
+        function tick(){
+          var diff = target - Date.now();
+          if (diff <= 0){
+            if (mode === 'daily'){ var d = new Date(); d.setHours(23,59,59,999); target = d.getTime(); diff = target - Date.now(); }
+            else if (mode === 'window'){ target = Date.now() + windowMs(root); localStorage.setItem(key, target); diff = target - Date.now(); }
+            else {
+              mode = 'window';
+              root.setAttribute('data-hsb-mode','window');
+              target = Date.now() + windowMs(root);
+              localStorage.setItem(key, target);
+              diff = target - Date.now();
+            }
+          }
+          var totalSec = Math.floor(diff / 1000);
+          var days = Math.floor(totalSec / 86400);
+          var hrs  = Math.floor((totalSec % 86400) / 3600);
+          var mins = Math.floor((totalSec % 3600) / 60);
+          var secs = totalSec % 60;
+          if (mode === 'fixed' && !alwaysSec && diff > switchH * 3600 * 1000){
+            setSeg(root, 0, days, 'DAYS'); setSeg(root, 1, hrs, 'HRS'); setSeg(root, 2, mins, 'MIN');
+          } else {
+            var totalHrs = Math.floor(totalSec / 3600);
+            setSeg(root, 0, totalHrs, 'HRS'); setSeg(root, 1, mins, 'MIN'); setSeg(root, 2, secs, 'SEC');
+          }
+        }
+        if (root.__hsbInt) clearInterval(root.__hsbInt);
+        tick();
+        root.__hsbInt = setInterval(tick, 1000);
+      }
+      function init(){ document.querySelectorAll('[data-hsb-root]').forEach(run); }
+      if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+      var tries = 0;
+      var iv = setInterval(function(){
+        tries++;
+        if (document.querySelector('[data-hsb-root]')){ init(); clearInterval(iv); }
+        else if (tries > 40){ clearInterval(iv); }
+      }, 200);
+    })();
+    </script>
+  {%- endif -%}
+{%- endif -%}
