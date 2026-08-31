@@ -247,6 +247,8 @@
             </span>
             {%- if f_timer -%}
               <span class="hsb-timer" aria-hidden="true">
+                <span class="hsb-seg hsb-seg--days" data-days-wrap style="display:none"><b data-seg-days>00</b><i>DAYS</i></span>
+                <span class="hsb-colon" data-days-colon style="display:none">:</span>
                 <span class="hsb-seg"><b data-seg="0">00</b><i data-lbl="0">HRS</i></span>
                 <span class="hsb-colon">:</span>
                 <span class="hsb-seg"><b data-seg="1">00</b><i data-lbl="1">MIN</i></span>
@@ -329,6 +331,10 @@
         var switchH = parseInt(root.getAttribute('data-hsb-switch'), 10);
         if (isNaN(switchH)) switchH = 48;
         var alwaysSec = root.getAttribute('data-hsb-always-seconds') === 'true';
+        var daysWrap = root.querySelector('[data-days-wrap]');
+        var daysColon = root.querySelector('[data-days-colon]');
+        var daysB = root.querySelector('[data-seg-days]');
+        function showDays(on){ if (daysWrap) daysWrap.style.display = on ? '' : 'none'; if (daysColon) daysColon.style.display = on ? '' : 'none'; }
         var target  = resolveTarget(root);
         function tick(){
           var diff = target - Date.now();
@@ -348,10 +354,15 @@
           var hrs  = Math.floor((totalSec % 86400) / 3600);
           var mins = Math.floor((totalSec % 3600) / 60);
           var secs = totalSec % 60;
+          var totalHrs = Math.floor(totalSec / 3600);
           if (mode === 'fixed' && !alwaysSec && diff > switchH * 3600 * 1000){
+            showDays(false);
             setSeg(root, 0, days, 'DAYS'); setSeg(root, 1, hrs, 'HRS'); setSeg(root, 2, mins, 'MIN');
+          } else if (days > 0){
+            showDays(true); if (daysB) daysB.textContent = pad(days);
+            setSeg(root, 0, hrs, 'HRS'); setSeg(root, 1, mins, 'MIN'); setSeg(root, 2, secs, 'SEC');
           } else {
-            var totalHrs = Math.floor(totalSec / 3600);
+            showDays(false);
             setSeg(root, 0, totalHrs, 'HRS'); setSeg(root, 1, mins, 'MIN'); setSeg(root, 2, secs, 'SEC');
           }
         }
